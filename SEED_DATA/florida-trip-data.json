@@ -1,0 +1,1365 @@
+{
+  "exportedAt": "2026-02-09T17:32:27.387Z",
+  "trip": {
+    "id": "7066daf8-c557-4c95-9b6b-046762843803",
+    "user_id": "62308137-85f0-4036-b1d7-a85822b73014",
+    "name": "Florida Family Adventure 2026",
+    "description": "Epic 19-day Florida holiday with Keys, Everglades, Tampa, Orlando, and Caribbean cruise",
+    "destination": "Florida, USA",
+    "start_date": "2026-07-07",
+    "end_date": "2026-07-25",
+    "cover_image_url": null,
+    "is_archived": false,
+    "created_at": "2026-02-02T10:34:35.313624+00:00",
+    "updated_at": "2026-02-02T10:34:35.313624+00:00",
+    "public_share_token": null
+  },
+  "planVersions": [
+    {
+      "id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "trip_id": "7066daf8-c557-4c95-9b6b-046762843803",
+      "name": "Plan A - Updated",
+      "description": "Optimised route via Naples & Tampa (no backtracking)",
+      "is_active": true,
+      "total_cost": 29337.38,
+      "currency": "GBP",
+      "color": "#3b82f6",
+      "created_at": "2026-02-02T10:34:35.454471+00:00",
+      "updated_at": "2026-02-02T23:52:22.916205+00:00"
+    }
+  ],
+  "itineraryDays": [
+    {
+      "id": "7641ecb7-a354-4014-afb0-4bc4784b1df6",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 1,
+      "date": "2026-07-07",
+      "location": "Miami",
+      "location_coordinates": {
+        "lat": 25.7617,
+        "lng": -80.1918
+      },
+      "icon": "✈️",
+      "color": "#FF6B6B",
+      "activities": [
+        {
+          "name": "Arrive Miami Airport 14:30"
+        },
+        {
+          "name": "Check into hotel"
+        },
+        {
+          "name": "Evening beach walk"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "4af8abb7-97f1-450d-8ab7-5f4ccc9100c5",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 2,
+      "date": "2026-07-08",
+      "location": "Miami",
+      "location_coordinates": {
+        "lat": 25.7617,
+        "lng": -80.1918
+      },
+      "icon": "⚾",
+      "color": "#FF6B6B",
+      "activities": [
+        {
+          "name": "Beach day"
+        },
+        {
+          "name": "Miami Marlins baseball game"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "97d78805-b574-403a-b75f-bd7a4c1570cd",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 3,
+      "date": "2026-07-09",
+      "location": "Key Largo → Islamorada",
+      "location_coordinates": {
+        "lat": 25.0865,
+        "lng": -80.4473
+      },
+      "icon": "🐠",
+      "color": "#4ECDC4",
+      "activities": [
+        {
+          "name": "Pick up Ford Expedition Max (early AM)"
+        },
+        {
+          "name": "Drive to Key Largo (~1hr)"
+        },
+        {
+          "name": "John Pennekamp Coral Reef State Park"
+        },
+        {
+          "name": "Glass bottom boat OR snorkel"
+        },
+        {
+          "name": "Drive to Islamorada (~40 mins)"
+        }
+      ],
+      "notes": null,
+      "drive_time": "~1.5 hrs total",
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "7d621d66-0538-4855-a046-25c5c45caa7b",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 4,
+      "date": "2026-07-10",
+      "location": "Islamorada",
+      "location_coordinates": {
+        "lat": 24.9243,
+        "lng": -80.6278
+      },
+      "icon": "🏝️",
+      "color": "#4ECDC4",
+      "activities": [
+        {
+          "name": "Relax in the Keys"
+        },
+        {
+          "name": "Visit Robbie's (fish feeding, restaurant, water activities)"
+        },
+        {
+          "name": "Kayaking or paddleboarding"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "e0085b3d-0151-4e89-af39-fa0a8dfa6f62",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 5,
+      "date": "2026-07-11",
+      "location": "Islamorada → Naples",
+      "location_coordinates": {
+        "lat": 24.9243,
+        "lng": -80.6278
+      },
+      "icon": "🌴",
+      "color": "#45B7D1",
+      "activities": [
+        {
+          "name": "Morning in the Keys"
+        },
+        {
+          "name": "Drive to Naples via Alligator Alley (~3 hrs)"
+        },
+        {
+          "name": "Scenic drive through the Everglades"
+        },
+        {
+          "name": "Arrive Naples early afternoon"
+        },
+        {
+          "name": "Beach time at Naples Pier"
+        },
+        {
+          "name": "Evening on Gulf Coast 🌅"
+        }
+      ],
+      "notes": null,
+      "drive_time": "~3 hrs via I-75/Alligator Alley",
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "75b1d3f0-297d-4c2d-b3f1-c68fdb21b00c",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 6,
+      "date": "2026-07-12",
+      "location": "Naples → Tampa",
+      "location_coordinates": {
+        "lat": 26.142,
+        "lng": -81.7948
+      },
+      "icon": "🇨🇺",
+      "color": "#f97316",
+      "activities": [
+        {
+          "name": "Morning in Naples"
+        },
+        {
+          "name": "Drive to Tampa (~2.5 hrs)"
+        },
+        {
+          "name": "Check into Residence Inn Downtown"
+        },
+        {
+          "name": "Lunch at Armature Works food hall"
+        },
+        {
+          "name": "Dolphin Boat Tour on Tampa Bay"
+        },
+        {
+          "name": "Walk Tampa Riverwalk"
+        },
+        {
+          "name": "Drive/streetcar to Ybor City"
+        },
+        {
+          "name": "Wander 7th Avenue & cigar shops"
+        },
+        {
+          "name": "Dinner at Columbia Restaurant (1905!)"
+        },
+        {
+          "name": "Ybor City Ghost Tour (evening)"
+        }
+      ],
+      "notes": null,
+      "drive_time": "~2.5 hrs via I-75",
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "e64e3ac3-b41b-4369-8eff-76a5f70e2fa6",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 7,
+      "date": "2026-07-13",
+      "location": "Tampa → Orlando",
+      "location_coordinates": {
+        "lat": 27.9506,
+        "lng": -82.4572
+      },
+      "icon": "🎢",
+      "color": "#7C3AED",
+      "activities": [
+        {
+          "name": "Breakfast at hotel (free!)"
+        },
+        {
+          "name": "Morning in Ybor City"
+        },
+        {
+          "name": "Coffee at La Segunda Bakery"
+        },
+        {
+          "name": "Visit Tabanero Cigars factory"
+        },
+        {
+          "name": "Drive to Orlando (~1.5 hrs)"
+        },
+        {
+          "name": "Arrive Portofino early afternoon!"
+        },
+        {
+          "name": "Express Pass valid from check-in!"
+        },
+        {
+          "name": "Evening: Universal parks or CityWalk"
+        }
+      ],
+      "notes": null,
+      "drive_time": "~1.5 hrs via I-4",
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "96ebb6bc-2b75-462b-8861-7ed20eb6d34d",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 8,
+      "date": "2026-07-14",
+      "location": "Orlando",
+      "location_coordinates": {
+        "lat": 28.4747,
+        "lng": -81.4631
+      },
+      "icon": "🎢",
+      "color": "#96CEB4",
+      "activities": [
+        {
+          "name": "EXPRESS PASS DAY (until park close!)"
+        },
+        {
+          "name": "Universal Studios Florida OR Islands of Adventure"
+        },
+        {
+          "name": "Maximize Express Pass before checkout"
+        },
+        {
+          "name": "Check into VistaCay evening"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "2a51a9d4-a657-4e83-8756-6e28c089f924",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 9,
+      "date": "2026-07-15",
+      "location": "Orlando",
+      "location_coordinates": {
+        "lat": 28.4747,
+        "lng": -81.4631
+      },
+      "icon": "⚡",
+      "color": "#96CEB4",
+      "activities": [
+        {
+          "name": "Universal Islands of Adventure"
+        },
+        {
+          "name": "Wizarding World of Harry Potter"
+        },
+        {
+          "name": "(No Express Pass - regular queues)"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "2e773b44-183e-4dac-8524-e3562014383c",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 10,
+      "date": "2026-07-16",
+      "location": "Orlando",
+      "location_coordinates": {
+        "lat": 28.4747,
+        "lng": -81.4631
+      },
+      "icon": "🌋",
+      "color": "#96CEB4",
+      "activities": [
+        {
+          "name": "Volcano Bay water park"
+        },
+        {
+          "name": "Universal CityWalk evening"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "127eca0a-48d1-43e8-8c7f-f77aebac95b1",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 11,
+      "date": "2026-07-17",
+      "location": "Orlando",
+      "location_coordinates": {
+        "lat": 28.4747,
+        "lng": -81.4631
+      },
+      "icon": "🐬",
+      "color": "#96CEB4",
+      "activities": [
+        {
+          "name": "Discovery Cove"
+        },
+        {
+          "name": "Dolphin swim experience"
+        },
+        {
+          "name": "All-inclusive day"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "f5bc4518-d33f-455f-810c-059d02d9c639",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 12,
+      "date": "2026-07-18",
+      "location": "Cape Canaveral",
+      "location_coordinates": {
+        "lat": 28.5721,
+        "lng": -80.648
+      },
+      "icon": "🚀",
+      "color": "#DDA0DD",
+      "activities": [
+        {
+          "name": "Kennedy Space Center day trip"
+        },
+        {
+          "name": "Rocket launches & exhibits"
+        }
+      ],
+      "notes": null,
+      "drive_time": "~2 hrs return",
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "7f117603-d588-4c55-98b2-e0782d51a8dd",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 13,
+      "date": "2026-07-19",
+      "location": "Fort Lauderdale",
+      "location_coordinates": {
+        "lat": 26.0924,
+        "lng": -80.1128
+      },
+      "icon": "🚢",
+      "color": "#FFD93D",
+      "activities": [
+        {
+          "name": "Drive to Port (~3 hrs)"
+        },
+        {
+          "name": "Drop off rental car"
+        },
+        {
+          "name": "Embark Caribbean cruise!"
+        }
+      ],
+      "notes": null,
+      "drive_time": "~3 hrs",
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    },
+    {
+      "id": "4e16700b-b4fc-4f32-80a0-930596839e18",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 14,
+      "date": "2026-07-20",
+      "location": "CocoCay",
+      "location_coordinates": null,
+      "icon": "🏖️",
+      "color": "#FFD93D",
+      "activities": [
+        {
+          "name": "At sea / Caribbean islands"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-03T16:09:53.116474+00:00"
+    },
+    {
+      "id": "a25e8970-c2e8-4b47-9270-53d0d282924b",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 15,
+      "date": "2026-07-21",
+      "location": "Sea Day",
+      "location_coordinates": null,
+      "icon": "🏖️",
+      "color": "#FFD93D",
+      "activities": [
+        {
+          "name": "Caribbean island stops"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-03T16:10:10.996468+00:00"
+    },
+    {
+      "id": "5cc8a704-e891-4e7f-87e4-f845d8884b69",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 16,
+      "date": "2026-07-22",
+      "location": "Falmouth Jamaica",
+      "location_coordinates": null,
+      "icon": "🏖️",
+      "color": "#FFD93D",
+      "activities": [
+        {
+          "name": "Caribbean island stops"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-03T16:10:34.154827+00:00"
+    },
+    {
+      "id": "6e40fdd6-b1e0-40b7-a04b-849768c90ce6",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 17,
+      "date": "2026-07-23",
+      "location": "Sea day",
+      "location_coordinates": null,
+      "icon": "🏖️",
+      "color": "#FFD93D",
+      "activities": [
+        {
+          "name": "Caribbean island stops"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-03T16:10:52.777463+00:00"
+    },
+    {
+      "id": "5dbd7aa5-312f-46ae-a094-4d97ddeafb86",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 18,
+      "date": "2026-07-24",
+      "location": "Nassau, Bahamas",
+      "location_coordinates": null,
+      "icon": "🏖️",
+      "color": "#FFD93D",
+      "activities": [
+        {
+          "name": "At sea / return to Fort Lauderdale"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-03T16:11:10.344182+00:00"
+    },
+    {
+      "id": "2ef79031-298b-45a8-b40a-4eff299bb503",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "day_number": 19,
+      "date": "2026-07-25",
+      "location": "Fort Lauderdale → Home",
+      "location_coordinates": {
+        "lat": 26.0924,
+        "lng": -80.1128
+      },
+      "icon": "🐊",
+      "color": "#FF6B6B",
+      "activities": [
+        {
+          "name": "Disembark cruise (morning)"
+        },
+        {
+          "name": "Everglades Airboat Excursion!"
+        },
+        {
+          "name": "Cruise-organised transfer via Everglades"
+        },
+        {
+          "name": "See alligators in their natural habitat"
+        },
+        {
+          "name": "Transfer continues to Miami Airport"
+        },
+        {
+          "name": "Fly home 17:00"
+        }
+      ],
+      "notes": null,
+      "drive_time": null,
+      "drive_distance": null,
+      "created_at": "2026-02-02T10:34:35.588191+00:00",
+      "updated_at": "2026-02-02T10:34:35.588191+00:00"
+    }
+  ],
+  "accommodations": [
+    {
+      "id": "9049c365-c55c-4446-a7e2-d677e86f8cf3",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "name": "The Betsy Hotel, South Beach",
+      "type": "hotel",
+      "location": "Miami Beach",
+      "address": null,
+      "coordinates": null,
+      "check_in": "2026-07-07",
+      "check_out": "2026-07-09",
+      "nights": 2,
+      "cost": 992.08,
+      "currency": "GBP",
+      "booking_reference": null,
+      "booking_url": null,
+      "cancellation_policy": null,
+      "amenities": [],
+      "notes": null,
+      "color": "#FF6B6B",
+      "is_confirmed": true,
+      "created_at": "2026-02-02T10:34:35.712156+00:00",
+      "updated_at": "2026-02-02T23:52:22.567113+00:00"
+    },
+    {
+      "id": "5fd55c7c-7625-4f25-add7-8ce79fc07722",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "name": "Bayside Resort",
+      "type": "resort",
+      "location": "Islamorada",
+      "address": null,
+      "coordinates": null,
+      "check_in": "2026-07-09",
+      "check_out": "2026-07-11",
+      "nights": 2,
+      "cost": 878,
+      "currency": "GBP",
+      "booking_reference": null,
+      "booking_url": null,
+      "cancellation_policy": null,
+      "amenities": [],
+      "notes": null,
+      "color": "#4ECDC4",
+      "is_confirmed": false,
+      "created_at": "2026-02-02T10:34:35.712156+00:00",
+      "updated_at": "2026-02-09T16:12:38.361365+00:00"
+    },
+    {
+      "id": "e14182db-c611-4faa-baf2-608dc4ff541a",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "name": "Naples Grande Beach Resort",
+      "type": "resort",
+      "location": "Naples",
+      "address": null,
+      "coordinates": null,
+      "check_in": "2026-07-11",
+      "check_out": "2026-07-12",
+      "nights": 1,
+      "cost": 250,
+      "currency": "GBP",
+      "booking_reference": null,
+      "booking_url": null,
+      "cancellation_policy": null,
+      "amenities": [],
+      "notes": "Temporary - needs confirmation",
+      "color": "#45B7D1",
+      "is_confirmed": false,
+      "created_at": "2026-02-02T10:34:35.712156+00:00",
+      "updated_at": "2026-02-02T10:34:35.712156+00:00"
+    },
+    {
+      "id": "d2fa4663-9a0b-4e2d-a2a8-f53d13a046ed",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "name": "Residence Inn Tampa Downtown",
+      "type": "hotel",
+      "location": "Tampa",
+      "address": null,
+      "coordinates": null,
+      "check_in": "2026-07-12",
+      "check_out": "2026-07-13",
+      "nights": 1,
+      "cost": 160,
+      "currency": "GBP",
+      "booking_reference": null,
+      "booking_url": null,
+      "cancellation_policy": null,
+      "amenities": [],
+      "notes": null,
+      "color": "#f97316",
+      "is_confirmed": false,
+      "created_at": "2026-02-02T10:34:35.712156+00:00",
+      "updated_at": "2026-02-02T10:34:35.712156+00:00"
+    },
+    {
+      "id": "9607372b-5e14-4445-a5a9-dce6d6e0ee35",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "name": "Portofino Hotel, Orlando",
+      "type": "resort",
+      "location": "Orlando",
+      "address": null,
+      "coordinates": null,
+      "check_in": "2026-07-13",
+      "check_out": "2026-07-14",
+      "nights": 1,
+      "cost": 760.32,
+      "currency": "GBP",
+      "booking_reference": null,
+      "booking_url": null,
+      "cancellation_policy": null,
+      "amenities": [],
+      "notes": "Includes Express Pass benefit",
+      "color": "#7C3AED",
+      "is_confirmed": true,
+      "created_at": "2026-02-02T10:34:35.712156+00:00",
+      "updated_at": "2026-02-02T23:52:22.732381+00:00"
+    },
+    {
+      "id": "b291c25f-53da-4fe4-b869-c868069a5238",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "name": "Orlando Vista Cay Condo",
+      "type": "villa",
+      "location": "Orlando",
+      "address": null,
+      "coordinates": null,
+      "check_in": "2026-07-14",
+      "check_out": "2026-07-19",
+      "nights": 5,
+      "cost": 1444.98,
+      "currency": "GBP",
+      "booking_reference": null,
+      "booking_url": null,
+      "cancellation_policy": null,
+      "amenities": [],
+      "notes": null,
+      "color": "#96CEB4",
+      "is_confirmed": true,
+      "created_at": "2026-02-02T10:34:35.712156+00:00",
+      "updated_at": "2026-02-02T23:52:22.647634+00:00"
+    },
+    {
+      "id": "c2a9597f-6bf5-4906-a820-1992ca4678c6",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "name": "Caribbean Cruise Ship",
+      "type": "cruise",
+      "location": "Caribbean",
+      "address": null,
+      "coordinates": null,
+      "check_in": "2026-07-19",
+      "check_out": "2026-07-25",
+      "nights": 6,
+      "cost": 19000,
+      "currency": "GBP",
+      "booking_reference": null,
+      "booking_url": null,
+      "cancellation_policy": null,
+      "amenities": [],
+      "notes": null,
+      "color": "#FFD93D",
+      "is_confirmed": false,
+      "created_at": "2026-02-02T10:34:35.712156+00:00",
+      "updated_at": "2026-02-02T10:34:35.712156+00:00"
+    }
+  ],
+  "transport": [
+    {
+      "id": "b4c0c923-1ce0-49f5-85dd-570c47cb7e37",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "type": "car_rental",
+      "provider": "Hertz/Enterprise",
+      "vehicle": "Ford Expedition Max",
+      "reference_number": null,
+      "pickup_location": "Miami",
+      "pickup_date": "2026-07-09",
+      "pickup_time": null,
+      "dropoff_location": "Fort Lauderdale Cruise Port",
+      "dropoff_date": "2026-07-19",
+      "dropoff_time": null,
+      "cost": 1500,
+      "currency": "GBP",
+      "includes": [],
+      "booking_url": null,
+      "notes": "3-row SUV, includes one-way fee",
+      "is_confirmed": false,
+      "created_at": "2026-02-02T10:34:35.840602+00:00",
+      "updated_at": "2026-02-02T10:34:35.840602+00:00"
+    }
+  ],
+  "costs": [
+    {
+      "id": "608c4658-f5b0-452a-8a5b-63be0daae3bc",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "accommodation",
+      "item": "Islamorada Hotel (2 nights)",
+      "amount": 878,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "af5bd6ca-a1ad-4571-97db-41cc58511d95",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "accommodation",
+      "item": "Naples Hotel (1 night)",
+      "amount": 250,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "a1eeee1a-22ae-4f36-9b07-5edfd70f9f78",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "accommodation",
+      "item": "Tampa Hotel (1 night)",
+      "amount": 160,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "df4a57d4-0a5b-4a52-a722-db91d1aa7fa8",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "accommodation",
+      "item": "Caribbean Cruise (6 nights)",
+      "amount": 19000,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "265078b2-81a1-46fb-a27a-92b95443a03f",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "transport",
+      "item": "Ford Expedition Max (10 days)",
+      "amount": 1500,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "b1fbfb66-535e-458a-b880-9d64f7a6163f",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "activities",
+      "item": "Baseball tickets",
+      "amount": 250,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "376044fa-cf67-40aa-a569-18e7f584eb14",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "activities",
+      "item": "Pennekamp entry",
+      "amount": 10,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "3bc07596-f826-4848-abcb-3d6882db77c5",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "activities",
+      "item": "Dolphin Boat Tour (Tampa)",
+      "amount": 120,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "0cd52f0c-ee00-403e-9236-283b630adc80",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "activities",
+      "item": "Columbia Restaurant dinner",
+      "amount": 225,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "9ea8fe6f-46d0-4f94-a19e-6a4f09e70434",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "activities",
+      "item": "Ybor City Ghost Tour",
+      "amount": 100,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "32a0a8d6-409c-442f-a84b-fc56b2622c17",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "activities",
+      "item": "Kennedy Space Center (inc. discount)",
+      "amount": 264,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": true,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "64f06730-52a5-4c9e-9cf3-13deec48d3eb",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "tickets",
+      "item": "14-day Universal All Park Tickets",
+      "amount": 2214.25,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": false,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "76427478-84b2-4f9a-9e8d-5fd609a0af1c",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "accommodation",
+      "item": "Orlando Vista Cay Condo (5 nights)",
+      "amount": 1444.98,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": false,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "d642f503-7107-458f-ad8d-9304b2fbc8b0",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "accommodation",
+      "item": "Portofino Hotel, Orlando (1 night)",
+      "amount": 760.32,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": false,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "1dcbf269-29e2-4280-9c27-39d052b2fbfa",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "activities",
+      "item": "Discovery Cove (inc. discount)",
+      "amount": 1168.75,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": false,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    },
+    {
+      "id": "38cda45a-eeeb-4dad-a189-fe412061dc7e",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "itinerary_day_id": null,
+      "category": "accommodation",
+      "item": "The Betsy Hotel, South Beach (2 nights)",
+      "amount": 992.08,
+      "currency": "GBP",
+      "is_paid": false,
+      "is_estimated": false,
+      "notes": null,
+      "created_at": "2026-02-02T10:34:35.958814+00:00"
+    }
+  ],
+  "checklistItems": [
+    {
+      "id": "56dfe7b9-41c8-48c1-8208-1df88afed8df",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "accommodation",
+      "name": "The Betsy Hotel, South Beach",
+      "description": "Miami Beach - 2 nights",
+      "source_type": "accommodation",
+      "source_id": "9049c365-c55c-4446-a7e2-d677e86f8cf3",
+      "booking_status": "confirmed",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 992.08,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 23,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "13cc73d8-a553-4e1d-ab4e-11dc0032f154",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "accommodation",
+      "name": "Naples Grande Beach Resort",
+      "description": "Naples - 1 night",
+      "source_type": "accommodation",
+      "source_id": "e14182db-c611-4faa-baf2-608dc4ff541a",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 250,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 25,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "856bec1a-26d5-4d00-8ca1-62b8ce4ffba6",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "accommodation",
+      "name": "Residence Inn Tampa Downtown",
+      "description": "Tampa - 1 night",
+      "source_type": "accommodation",
+      "source_id": "d2fa4663-9a0b-4e2d-a2a8-f53d13a046ed",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 160,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 26,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "5d4bae1a-5da3-4d4a-adbd-7d70a02e819a",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "accommodation",
+      "name": "Portofino Hotel, Orlando",
+      "description": "Orlando - 1 night",
+      "source_type": "accommodation",
+      "source_id": "9607372b-5e14-4445-a5a9-dce6d6e0ee35",
+      "booking_status": "confirmed",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 760.32,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 27,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "3c1ec891-b304-41ff-a79e-2d5516b864d9",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "accommodation",
+      "name": "Orlando Vista Cay Condo",
+      "description": "Orlando - 5 nights",
+      "source_type": "accommodation",
+      "source_id": "b291c25f-53da-4fe4-b869-c868069a5238",
+      "booking_status": "confirmed",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 1444.98,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 28,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "c1a74cd6-349b-4b82-9a3f-c8b33057acf1",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "transport",
+      "name": "Ford Expedition Max",
+      "description": "Miami → Fort Lauderdale Cruise Port",
+      "source_type": "transport",
+      "source_id": "b4c0c923-1ce0-49f5-85dd-570c47cb7e37",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 1500,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 30,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "f4d0f1a7-ba89-4a4f-8f19-50b1bb7c0495",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "tickets",
+      "name": "14-day Universal All Park Tickets",
+      "description": null,
+      "source_type": "cost",
+      "source_id": "64f06730-52a5-4c9e-9cf3-13deec48d3eb",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 2214.25,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 31,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "dd60079c-5a28-4aaa-8222-5fbe8df6e622",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "activity",
+      "name": "Discovery Cove (inc. discount)",
+      "description": null,
+      "source_type": "cost",
+      "source_id": "1dcbf269-29e2-4280-9c27-39d052b2fbfa",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 1168.75,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 32,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "a46c7098-34d2-45fa-846c-924478d73c41",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "activity",
+      "name": "Kennedy Space Center (inc. discount)",
+      "description": null,
+      "source_type": "cost",
+      "source_id": "32a0a8d6-409c-442f-a84b-fc56b2622c17",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 264,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 33,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "46f1ba25-1c1b-49b2-ac0e-078052ed0227",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "activity",
+      "name": "Columbia Restaurant dinner",
+      "description": null,
+      "source_type": "cost",
+      "source_id": "0cd52f0c-ee00-403e-9236-283b630adc80",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 225,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 35,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "65ea3a43-92f8-44fd-9851-37bb6253f218",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "activity",
+      "name": "Dolphin Boat Tour (Tampa)",
+      "description": null,
+      "source_type": "cost",
+      "source_id": "3bc07596-f826-4848-abcb-3d6882db77c5",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 120,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 36,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "f6ff32ee-8416-453a-98f9-3a048547a905",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "activity",
+      "name": "Ybor City Ghost Tour",
+      "description": null,
+      "source_type": "cost",
+      "source_id": "9ea8fe6f-46d0-4f94-a19e-6a4f09e70434",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 100,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 37,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "f658c491-e45b-4bb7-9878-bdd34cdb1991",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "activity",
+      "name": "Pennekamp entry",
+      "description": null,
+      "source_type": "cost",
+      "source_id": "376044fa-cf67-40aa-a569-18e7f584eb14",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 10,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 38,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T11:30:21.625451+00:00"
+    },
+    {
+      "id": "38c30716-0c89-44c5-abfb-891668d8493d",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "accommodation",
+      "name": "Bayside Resort",
+      "description": "Islamorada - 2 nights",
+      "source_type": "accommodation",
+      "source_id": "5fd55c7c-7625-4f25-add7-8ce79fc07722",
+      "booking_status": "not_booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 878,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 24,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T16:12:38.453305+00:00"
+    },
+    {
+      "id": "7dffa6b0-7330-4a05-bb52-7b861f74dba1",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "accommodation",
+      "name": "Caribbean Cruise Ship",
+      "description": "Caribbean - 6 nights",
+      "source_type": "accommodation",
+      "source_id": "c2a9597f-6bf5-4906-a820-1992ca4678c6",
+      "booking_status": "booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 19000,
+      "deposit_amount": 2016,
+      "amount_paid": 2016,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 29,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T16:12:38.517332+00:00"
+    },
+    {
+      "id": "5a34cd0f-33cc-4aab-b372-17d2eeab8a9c",
+      "plan_version_id": "1331e7c4-1011-4abb-8543-ccbb9e8e450f",
+      "category": "activity",
+      "name": "Baseball tickets",
+      "description": null,
+      "source_type": "cost",
+      "source_id": "b1fbfb66-535e-458a-b880-9d64f7a6163f",
+      "booking_status": "booked",
+      "booking_reference": null,
+      "booking_url": null,
+      "total_cost": 250,
+      "deposit_amount": 0,
+      "amount_paid": 0,
+      "is_fully_paid": false,
+      "payment_type": "full",
+      "payment_due_date": null,
+      "payment_due_context": "flexible",
+      "notes": null,
+      "sort_order": 34,
+      "created_at": "2026-02-09T11:30:21.625451+00:00",
+      "updated_at": "2026-02-09T16:17:57.574506+00:00"
+    }
+  ],
+  "activities": [],
+  "decisions": [],
+  "travellers": [],
+  "packingItems": [],
+  "travelInsurance": []
+}
