@@ -15,9 +15,27 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url)
   const tripId = searchParams.get('trip_id')
+  const countOnly = searchParams.get('countOnly') === 'true'
 
   if (!tripId) {
     return NextResponse.json({ error: 'trip_id is required' }, { status: 400 })
+  }
+
+  if (countOnly) {
+    // Return just the counts
+    const { data, error } = await supabase
+      .from('packing_items')
+      .select('packed')
+      .eq('trip_id', tripId)
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    const total = data?.length || 0
+    const packed = data?.filter((item) => item.packed).length || 0
+
+    return NextResponse.json({ total, packed })
   }
 
   const { data, error } = await supabase
