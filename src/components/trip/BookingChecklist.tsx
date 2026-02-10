@@ -109,7 +109,7 @@ export function BookingChecklist({
 
   const loadItems = useCallback(async () => {
     try {
-      const res = await fetch(`/api/checklist-items?plan_version_id=${planVersionId}`)
+      const res = await fetch(`/api/checklist?planVersionId=${planVersionId}`)
       if (!res.ok) throw new Error('Failed to load checklist')
       const data = await res.json()
       setItems(data)
@@ -175,7 +175,7 @@ export function BookingChecklist({
     const nextStatus = STATUS_CYCLE[(currentIndex + 1) % STATUS_CYCLE.length]
 
     try {
-      const res = await fetch(`/api/checklist-items/${item.id}`, {
+      const res = await fetch(`/api/checklist/${item.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ booking_status: nextStatus }),
@@ -214,7 +214,7 @@ export function BookingChecklist({
       }
 
       if (editingId) {
-        const res = await fetch(`/api/checklist-items/${editingId}`, {
+        const res = await fetch(`/api/checklist/${editingId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -223,7 +223,7 @@ export function BookingChecklist({
         const updated = await res.json()
         setItems((prev) => prev.map((i) => (i.id === editingId ? updated : i)))
       } else {
-        const res = await fetch('/api/checklist-items', {
+        const res = await fetch('/api/checklist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -267,7 +267,7 @@ export function BookingChecklist({
     if (!item) return
 
     try {
-      const res = await fetch(`/api/checklist-items/${id}`, {
+      const res = await fetch(`/api/checklist/${id}`, {
         method: 'DELETE',
       })
       if (!res.ok) throw new Error('Failed to delete item')
@@ -361,7 +361,7 @@ export function BookingChecklist({
 
       // Add items one by one (or could batch via API)
       for (const item of itemsToAdd) {
-        const res = await fetch('/api/checklist-items', {
+        const res = await fetch('/api/checklist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(item),

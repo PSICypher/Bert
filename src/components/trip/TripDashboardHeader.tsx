@@ -94,7 +94,7 @@ export default function TripDashboardHeader({
   // Fetch packing count
   const fetchPackingCount = useCallback(async () => {
     try {
-      const res = await fetch(`/api/packing?tripId=${trip.id}&countOnly=true`);
+      const res = await fetch(`/api/packing?trip_id=${trip.id}&countOnly=true`);
       if (res.ok) {
         const data = await res.json();
         setPackingCount({ total: data.total || 0, packed: data.packed || 0 });

@@ -17,34 +17,40 @@ import TripHeader from '@/components/trip/TripHeader';
 import TripDashboardHeader from '@/components/trip/TripDashboardHeader';
 import PlanVersionTabs from '@/components/trip/PlanVersionTabs';
 import CurrencyWidget from '@/components/trip/CurrencyWidget';
-import JourneyOverview from '@/components/trip/JourneyOverview';
+import { JourneyOverview } from '@/components/trip/JourneyOverview';
 import { DayCardGrid } from '@/components/trip/DayCardGrid';
 import type { Database } from '@/lib/database.types';
 
-// Dynamic imports for heavier components
-const BookingChecklist = dynamic(() => import('@/components/trip/BookingChecklist'), {
-  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
-});
+// Dynamic imports for heavier components (using named exports)
+const BookingChecklist = dynamic(
+  () => import('@/components/trip/BookingChecklist').then((mod) => mod.BookingChecklist),
+  { loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" /> }
+);
 
-const ResearchChat = dynamic(() => import('@/components/trip/ResearchChat'), {
-  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
-});
+const ResearchChat = dynamic(
+  () => import('@/components/trip/ResearchChat').then((mod) => mod.ResearchChat),
+  { loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" /> }
+);
 
-const TravelDocsHub = dynamic(() => import('@/components/trip/TravelDocsHub'), {
-  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
-});
+const TravelDocsHub = dynamic(
+  () => import('@/components/trip/TravelDocsHub').then((mod) => mod.TravelDocsHub),
+  { loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" /> }
+);
 
-const DocumentsTab = dynamic(() => import('@/components/trip/DocumentsTab'), {
-  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
-});
+const DocumentsTab = dynamic(
+  () => import('@/components/trip/DocumentsTab').then((mod) => mod.DocumentsTab),
+  { loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" /> }
+);
 
-const PackingList = dynamic(() => import('@/components/trip/PackingList'), {
-  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
-});
+const PackingList = dynamic(
+  () => import('@/components/trip/PackingList').then((mod) => mod.PackingList),
+  { loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" /> }
+);
 
-const AiInsights = dynamic(() => import('@/components/trip/AiInsights'), {
-  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
-});
+const AiInsights = dynamic(
+  () => import('@/components/trip/AiInsights').then((mod) => mod.AiInsights),
+  { loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" /> }
+);
 
 type Trip = Database['public']['Tables']['trips']['Row'];
 type PlanVersion = Database['public']['Tables']['plan_versions']['Row'];
