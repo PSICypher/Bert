@@ -130,7 +130,7 @@ export default function TripPage() {
       const [daysRes, accRes, transportRes, costsRes] = await Promise.all([
         fetch(`/api/itinerary-days?planVersionId=${activePlanId}`),
         fetch(`/api/accommodations?planVersionId=${activePlanId}`),
-        fetch(`/api/transport?planVersionId=${activePlanId}`),
+        fetch(`/api/transport?plan_version_id=${activePlanId}`),
         fetch(`/api/costs?planVersionId=${activePlanId}`),
       ]);
 
@@ -161,7 +161,7 @@ export default function TripPage() {
   // Fetch decisions
   const fetchDecisions = useCallback(async () => {
     try {
-      const res = await fetch(`/api/decisions?tripId=${tripId}`);
+      const res = await fetch(`/api/decisions?trip_id=${tripId}`);
       if (!res.ok) throw new Error('Failed to fetch decisions');
       const data = await res.json();
       setDecisions(data);
