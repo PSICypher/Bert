@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import {
   Map,
   ListChecks,
@@ -16,12 +17,40 @@ import TripHeader from '@/components/trip/TripHeader';
 import TripDashboardHeader from '@/components/trip/TripDashboardHeader';
 import PlanVersionTabs from '@/components/trip/PlanVersionTabs';
 import CurrencyWidget from '@/components/trip/CurrencyWidget';
+import JourneyOverview from '@/components/trip/JourneyOverview';
+import { DayCardGrid } from '@/components/trip/DayCardGrid';
 import type { Database } from '@/lib/database.types';
+
+// Dynamic imports for heavier components
+const BookingChecklist = dynamic(() => import('@/components/trip/BookingChecklist'), {
+  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
+});
+
+const ResearchChat = dynamic(() => import('@/components/trip/ResearchChat'), {
+  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
+});
+
+const TravelDocsHub = dynamic(() => import('@/components/trip/TravelDocsHub'), {
+  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
+});
+
+const DocumentsTab = dynamic(() => import('@/components/trip/DocumentsTab'), {
+  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
+});
+
+const PackingList = dynamic(() => import('@/components/trip/PackingList'), {
+  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
+});
+
+const AiInsights = dynamic(() => import('@/components/trip/AiInsights'), {
+  loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" />,
+});
 
 type Trip = Database['public']['Tables']['trips']['Row'];
 type PlanVersion = Database['public']['Tables']['plan_versions']['Row'];
 type ItineraryDay = Database['public']['Tables']['itinerary_days']['Row'];
 type Accommodation = Database['public']['Tables']['accommodations']['Row'];
+type Transport = Database['public']['Tables']['transport']['Row'];
 type Cost = Database['public']['Tables']['costs']['Row'];
 type Decision = Database['public']['Tables']['decisions']['Row'];
 
@@ -54,11 +83,13 @@ export default function TripPage() {
   const [activePlanId, setActivePlanId] = useState<string>('');
   const [days, setDays] = useState<ItineraryDay[]>([]);
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
+  const [transport, setTransport] = useState<Transport[]>([]);
   const [costs, setCosts] = useState<Cost[]>([]);
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [activeTab, setActiveTab] = useState<TabId>('overview');
 
   const activePlan = plans.find((p) => p.id === activePlanId) || null;
+  const currencySymbol = activePlan?.currency === 'GBP' ? '£' : '$';
 
   // Fetch trip data
   const fetchTrip = useCallback(async () => {
@@ -96,9 +127,10 @@ export default function TripPage() {
     if (!activePlanId) return;
 
     try {
-      const [daysRes, accRes, costsRes] = await Promise.all([
+      const [daysRes, accRes, transportRes, costsRes] = await Promise.all([
         fetch(`/api/itinerary-days?planVersionId=${activePlanId}`),
         fetch(`/api/accommodations?planVersionId=${activePlanId}`),
+        fetch(`/api/transport?planVersionId=${activePlanId}`),
         fetch(`/api/costs?planVersionId=${activePlanId}`),
       ]);
 
@@ -110,6 +142,11 @@ export default function TripPage() {
       if (accRes.ok) {
         const accData = await accRes.json();
         setAccommodations(accData);
+      }
+
+      if (transportRes.ok) {
+        const transportData = await transportRes.json();
+        setTransport(transportData);
       }
 
       if (costsRes.ok) {
@@ -152,6 +189,11 @@ export default function TripPage() {
 
   const handlePlansChanged = () => {
     fetchPlans();
+  };
+
+  const handleChangeDay = (day: ItineraryDay) => {
+    console.log('Edit day:', day.id);
+    // TODO: Open change sheet for day editing
   };
 
   if (loading) {
@@ -233,121 +275,71 @@ export default function TripPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            {/* Overview placeholder - will show JourneyOverview, DayCardGrid, TripMap, etc. */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Trip Overview</h2>
-              {days.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {days.map((day) => (
-                    <div
-                      key={day.id}
-                      className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <span
-                          className="w-8 h-8 flex items-center justify-center rounded-full text-white text-sm font-medium"
-                          style={{ backgroundColor: day.color }}
-                        >
-                          {day.day_number}
-                        </span>
-                        <div>
-                          <div className="font-medium text-gray-900">{day.location}</div>
-                          {day.date && (
-                            <div className="text-xs text-gray-500">
-                              {new Date(day.date).toLocaleDateString('en-US', {
-                                weekday: 'short',
-                                month: 'short',
-                                day: 'numeric',
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      {day.drive_time && (
-                        <div className="text-xs text-gray-500 mt-2">
-                          Drive: {day.drive_time}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No itinerary days added yet.</p>
-              )}
-            </div>
+            {/* Journey Overview */}
+            {days.length > 0 && <JourneyOverview days={days} />}
 
-            {/* Accommodations summary */}
-            {accommodations.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Accommodations</h2>
-                <div className="space-y-3">
-                  {accommodations.map((acc) => (
-                    <div
-                      key={acc.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                    >
-                      <div>
-                        <div className="font-medium text-gray-900">{acc.name}</div>
-                        <div className="text-sm text-gray-500">
-                          {acc.check_in} to {acc.check_out} ({acc.nights} nights)
-                        </div>
-                      </div>
-                      {acc.cost && (
-                        <div className="text-sm font-medium text-gray-900">
-                          {new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: acc.currency,
-                          }).format(acc.cost)}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Day Card Grid */}
+            <DayCardGrid
+              days={days}
+              accommodations={accommodations}
+              costs={costs}
+              currencySymbol={currencySymbol}
+              planVersionId={activePlanId}
+              onChangeDay={handleChangeDay}
+            />
           </div>
         )}
 
         {activeTab === 'research' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Research</h2>
-            <p className="text-gray-500">Research chat will be available in a future update.</p>
-          </div>
+          <ResearchChat
+            tripId={tripId}
+            planVersionId={activePlanId || null}
+            destination={trip.destination}
+          />
         )}
 
-        {activeTab === 'checklist' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Booking Checklist</h2>
-            <p className="text-gray-500">Booking checklist will be available in a future update.</p>
-          </div>
+        {activeTab === 'checklist' && activePlan && (
+          <BookingChecklist
+            planVersionId={activePlan.id}
+            planName={activePlan.name}
+            currencySymbol={currencySymbol}
+            accommodations={accommodations}
+            transport={transport}
+            costs={costs}
+          />
         )}
 
         {activeTab === 'travel-docs' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Travel Documents</h2>
-            <p className="text-gray-500">Travel docs hub will be available in a future update.</p>
-          </div>
+          <TravelDocsHub
+            tripId={tripId}
+            tripStartDate={trip.start_date}
+          />
         )}
 
         {activeTab === 'documents' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Documents</h2>
-            <p className="text-gray-500">Document uploads will be available in a future update.</p>
-          </div>
+          <DocumentsTab tripId={tripId} />
         )}
 
         {activeTab === 'packing' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Packing List</h2>
-            <p className="text-gray-500">Packing list will be available in a future update.</p>
-          </div>
+          <PackingList
+            tripId={tripId}
+            destination={trip.destination}
+            startDate={trip.start_date}
+            endDate={trip.end_date}
+          />
         )}
 
-        {activeTab === 'ai-insights' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">AI Insights</h2>
-            <p className="text-gray-500">AI insights will be available in a future update.</p>
-          </div>
+        {activeTab === 'ai-insights' && activePlan && (
+          <AiInsights
+            tripId={tripId}
+            plans={plans}
+            activePlanId={activePlanId}
+            days={days}
+            accommodations={accommodations}
+            transport={transport}
+            costs={costs}
+            decisions={decisions}
+          />
         )}
       </div>
 
