@@ -1,62 +1,63 @@
-import { createBrowserClient, createServerClient } from '@supabase/ssr';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-
-// Re-export Database type for consumers
-export type { Database } from './database.types';
+import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
+import type { Database } from './database.types'
 
 /**
- * Create a Supabase client for browser-side use in Client Components.
- * Uses the anon key and respects RLS policies based on the user's session.
+ * Route Handler Client - for use in API Routes and Server Actions
+ * Uses the anon key, manages cookies for session handling, respects RLS
  */
-export function createBrowserSupabaseClient(): SupabaseClient {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-}
-
-/**
- * Create a Supabase client for use in API Route Handlers.
- * Reads the session from cookies and respects RLS policies.
- */
-export function createRouteHandlerClient(): SupabaseClient {
-  const cookieStore = cookies();
-  return createServerClient(
+export function createRouteHandlerClient() {
+  const cookieStore = cookies()
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll();
+          return cookieStore.getAll()
         },
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
-            );
+            )
           } catch {
-            // Ignore errors when called from Server Components
+            // Called from Server Component - cookies are read-only
           }
-        },
-      },
+        }
+      }
     }
-  );
+  )
 }
 
 /**
- * Create a Supabase admin client that bypasses RLS.
- * ONLY use server-side for operations that require elevated permissions.
+ * Admin Client - for privileged server-side operations
+ * Uses the service role key - BYPASSES RLS completely
+ * Only use for operations that require elevated privileges:
+ * - Auto-linking trip shares on auth callback
+ * - Admin operations
+ *
+ * NEVER expose or use in client-side code
  */
-export function createAdminSupabaseClient(): SupabaseClient {
-  return createClient(
+export function createAdminSupabaseClient() {
+  return createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
       auth: {
         autoRefreshToken: false,
-        persistSession: false,
-      },
+        persistSession: false
+      }
     }
-  );
+  )
 }
+
+/**
+ * Allowlist of authorized emails
+ * Add users here to grant them access to the app
+ */
+export const ALLOWED_EMAILS = [
+  'schalk.vdmerwe@gmail.com',
+  'vdmkelz@gmail.com',
+]

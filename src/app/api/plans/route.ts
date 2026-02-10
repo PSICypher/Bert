@@ -5,28 +5,28 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient();
     const { searchParams } = new URL(request.url);
-    const planVersionId = searchParams.get('planVersionId');
+    const tripId = searchParams.get('tripId');
 
-    if (!planVersionId) {
+    if (!tripId) {
       return NextResponse.json(
-        { error: 'planVersionId is required' },
+        { error: 'tripId is required' },
         { status: 400 }
       );
     }
 
     const { data, error } = await supabase
-      .from('accommodations')
+      .from('plan_versions')
       .select('*')
-      .eq('plan_version_id', planVersionId)
-      .order('check_in', { ascending: true });
+      .eq('trip_id', tripId)
+      .order('created_at', { ascending: true });
 
     if (error) throw error;
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching accommodations:', error);
+    console.error('Error fetching plans:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch accommodations' },
+      { error: 'Failed to fetch plans' },
       { status: 500 }
     );
   }
@@ -37,16 +37,15 @@ export async function POST(request: NextRequest) {
     const supabase = createRouteHandlerClient();
     const body = await request.json();
 
-    // Calculate nights if check_in and check_out are provided
-    if (body.check_in && body.check_out) {
-      const checkIn = new Date(body.check_in);
-      const checkOut = new Date(body.check_out);
-      body.nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-    }
-
     const { data, error } = await supabase
-      .from('accommodations')
-      .insert(body)
+      .from('plan_versions')
+      .insert({
+        trip_id: body.trip_id,
+        name: body.name,
+        color: body.color || '#3B82F6',
+        currency: body.currency || 'USD',
+        is_active: body.is_active || false,
+      })
       .select()
       .single();
 
@@ -54,9 +53,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Error creating accommodation:', error);
+    console.error('Error creating plan:', error);
     return NextResponse.json(
-      { error: 'Failed to create accommodation' },
+      { error: 'Failed to create plan' },
       { status: 500 }
     );
   }

@@ -15,18 +15,18 @@ export async function GET(request: NextRequest) {
     }
 
     const { data, error } = await supabase
-      .from('accommodations')
+      .from('checklist_items')
       .select('*')
       .eq('plan_version_id', planVersionId)
-      .order('check_in', { ascending: true });
+      .order('sort_order', { ascending: true });
 
     if (error) throw error;
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching accommodations:', error);
+    console.error('Error fetching checklist:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch accommodations' },
+      { error: 'Failed to fetch checklist' },
       { status: 500 }
     );
   }
@@ -37,16 +37,19 @@ export async function POST(request: NextRequest) {
     const supabase = createRouteHandlerClient();
     const body = await request.json();
 
-    // Calculate nights if check_in and check_out are provided
-    if (body.check_in && body.check_out) {
-      const checkIn = new Date(body.check_in);
-      const checkOut = new Date(body.check_out);
-      body.nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-    }
+    // Get the next sort order
+    const { data: existing } = await supabase
+      .from('checklist_items')
+      .select('sort_order')
+      .eq('plan_version_id', body.plan_version_id)
+      .order('sort_order', { ascending: false })
+      .limit(1);
+
+    const nextOrder = existing && existing.length > 0 ? existing[0].sort_order + 1 : 0;
 
     const { data, error } = await supabase
-      .from('accommodations')
-      .insert(body)
+      .from('checklist_items')
+      .insert({ ...body, sort_order: body.sort_order ?? nextOrder })
       .select()
       .single();
 
@@ -54,9 +57,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Error creating accommodation:', error);
+    console.error('Error creating checklist item:', error);
     return NextResponse.json(
-      { error: 'Failed to create accommodation' },
+      { error: 'Failed to create checklist item' },
       { status: 500 }
     );
   }

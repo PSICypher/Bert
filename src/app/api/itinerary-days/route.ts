@@ -15,18 +15,18 @@ export async function GET(request: NextRequest) {
     }
 
     const { data, error } = await supabase
-      .from('accommodations')
+      .from('itinerary_days')
       .select('*')
       .eq('plan_version_id', planVersionId)
-      .order('check_in', { ascending: true });
+      .order('day_number', { ascending: true });
 
     if (error) throw error;
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching accommodations:', error);
+    console.error('Error fetching itinerary days:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch accommodations' },
+      { error: 'Failed to fetch itinerary days' },
       { status: 500 }
     );
   }
@@ -37,15 +37,8 @@ export async function POST(request: NextRequest) {
     const supabase = createRouteHandlerClient();
     const body = await request.json();
 
-    // Calculate nights if check_in and check_out are provided
-    if (body.check_in && body.check_out) {
-      const checkIn = new Date(body.check_in);
-      const checkOut = new Date(body.check_out);
-      body.nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-    }
-
     const { data, error } = await supabase
-      .from('accommodations')
+      .from('itinerary_days')
       .insert(body)
       .select()
       .single();
@@ -54,9 +47,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Error creating accommodation:', error);
+    console.error('Error creating itinerary day:', error);
     return NextResponse.json(
-      { error: 'Failed to create accommodation' },
+      { error: 'Failed to create itinerary day' },
       { status: 500 }
     );
   }
