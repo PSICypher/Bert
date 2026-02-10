@@ -16,41 +16,33 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { endpoint, keys } = body;
+    const { endpoint } = body;
 
-    if (!endpoint || !keys?.p256dh || !keys?.auth) {
+    if (!endpoint) {
       return NextResponse.json(
-        { error: 'Invalid subscription data' },
+        { error: 'Endpoint is required' },
         { status: 400 }
       );
     }
 
-    // Upsert the subscription (update if exists, insert if not)
+    // Delete the subscription
     const { error } = await supabase
       .from('push_subscriptions')
-      .upsert(
-        {
-          user_id: user.id,
-          endpoint,
-          keys_p256dh: keys.p256dh,
-          keys_auth: keys.auth,
-        },
-        {
-          onConflict: 'endpoint',
-        }
-      );
+      .delete()
+      .eq('user_id', user.id)
+      .eq('endpoint', endpoint);
 
     if (error) {
-      console.error('Error saving push subscription:', error);
+      console.error('Error deleting push subscription:', error);
       return NextResponse.json(
-        { error: 'Failed to save subscription' },
+        { error: 'Failed to delete subscription' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Push subscribe error:', error);
+    console.error('Push unsubscribe error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
