@@ -112,8 +112,8 @@ export default function PushNotificationToggle() {
         console.log('[Push] Registering service worker...');
         setStep('3a');
 
-        // Register the SW
-        registration = await navigator.serviceWorker.register('/sw.js');
+        // Register minimal push SW (not the full next-pwa one)
+        registration = await navigator.serviceWorker.register('/push-sw.js');
         console.log('[Push] Registered, active:', !!registration.active, 'installing:', !!registration.installing, 'waiting:', !!registration.waiting);
         setStep('3b');
 
