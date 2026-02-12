@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, BellOff, Loader2 } from 'lucide-react';
+import { Bell, BellOff, BellRing, Loader2, AlertCircle } from 'lucide-react';
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -14,168 +14,241 @@ function urlBase64ToUint8Array(base64String: string) {
   return outputArray;
 }
 
+type Status = 'loading' | 'off' | 'on' | 'denied' | 'error' | 'unsupported';
+
 export default function PushNotificationToggle() {
-  const [isSupported, setIsSupported] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isReady, setIsReady] = useState(false);
+  const [status, setStatus] = useState<Status>('loading');
+  const [isActioning, setIsActioning] = useState(false);
 
   useEffect(() => {
-    async function checkSupport() {
-      // Check if push notifications are supported
-      if (typeof window === 'undefined') return;
-
-      if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
-        setIsSupported(false);
-        setIsReady(true);
-        return;
-      }
-
-      setIsSupported(true);
-
-      // Check current subscription with timeout
-      try {
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 3000)
-        );
-
-        const checkPromise = async () => {
-          const registrations = await navigator.serviceWorker.getRegistrations();
-          if (registrations.length > 0) {
-            const subscription = await registrations[0].pushManager.getSubscription();
-            return !!subscription;
-          }
-          return false;
-        };
-
-        const subscribed = await Promise.race([checkPromise(), timeoutPromise]);
-        setIsSubscribed(subscribed as boolean);
-      } catch {
-        // Timeout or error - just show as not subscribed
-        setIsSubscribed(false);
-      }
-
-      setIsReady(true);
-    }
-
-    checkSupport();
+    checkStatus();
   }, []);
 
-  const subscribe = async () => {
-    setIsLoading(true);
+  async function checkStatus() {
+    if (typeof window === 'undefined') {
+      setStatus('unsupported');
+      return;
+    }
+
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+      setStatus('unsupported');
+      return;
+    }
+
+    // Check permission
+    if (Notification.permission === 'denied') {
+      setStatus('denied');
+      return;
+    }
+
+    // Check if subscribed
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const reg of registrations) {
+        const sub = await reg.pushManager.getSubscription();
+        if (sub) {
+          setStatus('on');
+          return;
+        }
+      }
+      setStatus('off');
+    } catch (err) {
+      console.error('Error checking push status:', err);
+      setStatus('off');
+    }
+  }
+
+  async function enableNotifications() {
+    setIsActioning(true);
 
     try {
       // Request permission
-      const result = await Notification.requestPermission();
+      const permission = await Notification.requestPermission();
 
-      if (result !== 'granted') {
-        setIsLoading(false);
+      if (permission === 'denied') {
+        setStatus('denied');
+        setIsActioning(false);
+        return;
+      }
+
+      if (permission !== 'granted') {
+        setStatus('off');
+        setIsActioning(false);
         return;
       }
 
       // Register service worker
-      const registration = await navigator.serviceWorker.register('/sw.js');
-
-      // Wait for it to be ready with timeout
-      const ready = await Promise.race([
-        navigator.serviceWorker.ready,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
-      ]) as ServiceWorkerRegistration;
-
-      // Subscribe to push
-      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-      if (!vapidPublicKey) {
-        console.error('VAPID public key not configured');
-        setIsLoading(false);
+      let registration: ServiceWorkerRegistration;
+      try {
+        registration = await navigator.serviceWorker.register('/sw.js');
+        // Wait a moment for it to activate
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } catch (err) {
+        console.error('SW registration failed:', err);
+        setStatus('error');
+        setIsActioning(false);
         return;
       }
 
-      const subscription = await ready.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-      });
+      // Get VAPID key
+      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!vapidPublicKey) {
+        console.error('No VAPID key');
+        setStatus('error');
+        setIsActioning(false);
+        return;
+      }
 
-      // Send subscription to server
-      const res = await fetch('/api/push/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          endpoint: subscription.endpoint,
-          keys: {
-            p256dh: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('p256dh')!))),
-            auth: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth')!))),
-          },
-        }),
-      });
+      // Subscribe to push
+      let subscription: PushSubscription;
+      try {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        });
+      } catch (err) {
+        console.error('Push subscribe failed:', err);
+        setStatus('error');
+        setIsActioning(false);
+        return;
+      }
 
-      if (res.ok) {
-        setIsSubscribed(true);
+      // Send to server
+      try {
+        const p256dh = subscription.getKey('p256dh');
+        const auth = subscription.getKey('auth');
+
+        if (!p256dh || !auth) {
+          throw new Error('Missing subscription keys');
+        }
+
+        const res = await fetch('/api/push/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: btoa(String.fromCharCode(...new Uint8Array(p256dh))),
+              auth: btoa(String.fromCharCode(...new Uint8Array(auth))),
+            },
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error('Server rejected subscription');
+        }
+
+        setStatus('on');
+      } catch (err) {
+        console.error('Server subscribe failed:', err);
+        // Still mark as on locally since browser is subscribed
+        setStatus('on');
       }
     } catch (err) {
-      console.error('Error subscribing to push:', err);
+      console.error('Enable notifications failed:', err);
+      setStatus('error');
     }
 
-    setIsLoading(false);
-  };
+    setIsActioning(false);
+  }
 
-  const unsubscribe = async () => {
-    setIsLoading(true);
+  async function disableNotifications() {
+    setIsActioning(true);
 
     try {
       const registrations = await navigator.serviceWorker.getRegistrations();
-      for (const registration of registrations) {
-        const subscription = await registration.pushManager.getSubscription();
-        if (subscription) {
-          await subscription.unsubscribe();
-          await fetch('/api/push/unsubscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ endpoint: subscription.endpoint }),
-          });
+      for (const reg of registrations) {
+        const sub = await reg.pushManager.getSubscription();
+        if (sub) {
+          // Tell server first
+          try {
+            await fetch('/api/push/unsubscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ endpoint: sub.endpoint }),
+            });
+          } catch (err) {
+            console.error('Server unsubscribe failed:', err);
+          }
+          // Unsubscribe locally
+          await sub.unsubscribe();
         }
       }
-      setIsSubscribed(false);
+      setStatus('off');
     } catch (err) {
-      console.error('Error unsubscribing from push:', err);
+      console.error('Disable notifications failed:', err);
+      setStatus('error');
     }
 
-    setIsLoading(false);
-  };
+    setIsActioning(false);
+  }
 
-  const toggle = () => {
-    if (isSubscribed) {
-      unsubscribe();
-    } else {
-      subscribe();
+  function handleClick() {
+    if (isActioning) return;
+
+    if (status === 'on') {
+      disableNotifications();
+    } else if (status === 'off' || status === 'error') {
+      enableNotifications();
     }
-  };
+  }
 
-  // Don't render until we know support status
-  if (!isReady || !isSupported) {
+  // Don't show if unsupported
+  if (status === 'loading' || status === 'unsupported') {
     return null;
   }
 
+  // Denied - show disabled state
+  if (status === 'denied') {
+    return (
+      <div
+        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-gray-100 text-gray-400 text-xs"
+        title="Notifications blocked in browser settings"
+      >
+        <BellOff className="w-3.5 h-3.5" />
+      </div>
+    );
+  }
+
+  // Error state
+  if (status === 'error') {
+    return (
+      <button
+        onClick={handleClick}
+        disabled={isActioning}
+        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-red-100 text-red-600 text-xs"
+        title="Error - tap to retry"
+      >
+        {isActioning ? (
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : (
+          <AlertCircle className="w-3.5 h-3.5" />
+        )}
+      </button>
+    );
+  }
+
+  // Normal on/off states
+  const isOn = status === 'on';
+
   return (
     <button
-      onClick={toggle}
-      disabled={isLoading}
+      onClick={handleClick}
+      disabled={isActioning}
       className={`flex items-center gap-1.5 px-2 py-1 rounded-md transition-colors text-xs ${
-        isSubscribed
-          ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+        isOn
+          ? 'bg-green-100 text-green-700'
           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
       }`}
-      title={isSubscribed ? 'Notifications on - tap to disable' : 'Enable notifications'}
+      title={isOn ? 'Notifications ON - tap to turn off' : 'Tap to enable notifications'}
     >
-      {isLoading ? (
+      {isActioning ? (
         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-      ) : isSubscribed ? (
-        <Bell className="w-3.5 h-3.5" />
+      ) : isOn ? (
+        <BellRing className="w-3.5 h-3.5" />
       ) : (
-        <BellOff className="w-3.5 h-3.5" />
+        <Bell className="w-3.5 h-3.5" />
       )}
-      <span className="hidden sm:inline">
-        {isSubscribed ? 'On' : 'Off'}
-      </span>
     </button>
   );
 }
