@@ -19,17 +19,53 @@ interface TripMapInnerProps {
   locations: TripMapLocation[]
   onLocationSelect?: (location: TripMapLocation | null) => void
   className?: string
+  showRouteOverlay?: boolean
+}
+
+// Create an SVG arrow marker for route direction
+function createArrowIcon(angle: number) {
+  return L.divIcon({
+    className: 'route-arrow',
+    html: `<div style="
+      transform: rotate(${angle}deg);
+      width: 12px;
+      height: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M2 6L10 6M10 6L7 3M10 6L7 9" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
+  })
+}
+
+// Calculate bearing between two points
+function bearing(from: [number, number], to: [number, number]): number {
+  const toRad = (d: number) => (d * Math.PI) / 180
+  const toDeg = (r: number) => (r * 180) / Math.PI
+  const dLon = toRad(to[1] - from[1])
+  const lat1 = toRad(from[0])
+  const lat2 = toRad(to[0])
+  const y = Math.sin(dLon) * Math.cos(lat2)
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
+  return (toDeg(Math.atan2(y, x)) + 360) % 360
 }
 
 export function TripMapInner({
   locations,
   onLocationSelect,
   className = '',
+  showRouteOverlay = false,
 }: TripMapInnerProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const markersRef = useRef<L.Marker[]>([])
   const polylinesRef = useRef<L.Polyline[]>([])
+  const arrowsRef = useRef<L.Marker[]>([])
   const [selectedLocation, setSelectedLocation] = useState<TripMapLocation | null>(null)
 
   // Group locations by type for legend
@@ -84,10 +120,17 @@ export function TripMapInner({
       scrollWheelZoom: true,
     })
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(map)
+    // Use a cleaner tile layer for route overlay mode
+    if (showRouteOverlay) {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        maxZoom: 19,
+      }).addTo(map)
+    } else {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map)
+    }
 
     mapInstanceRef.current = map
 
@@ -95,18 +138,20 @@ export function TripMapInner({
       map.remove()
       mapInstanceRef.current = null
     }
-  }, [])
+  }, [showRouteOverlay])
 
   // Update markers and polylines when locations change
   useEffect(() => {
     const map = mapInstanceRef.current
     if (!map) return
 
-    // Clear existing markers and polylines
+    // Clear existing markers, polylines, and arrows
     markersRef.current.forEach((m) => m.remove())
     polylinesRef.current.forEach((p) => p.remove())
+    arrowsRef.current.forEach((a) => a.remove())
     markersRef.current = []
     polylinesRef.current = []
+    arrowsRef.current = []
 
     if (locations.length === 0) {
       map.setView([40, -95], 4) // Default view (US center)
@@ -146,9 +191,50 @@ export function TripMapInner({
       markersRef.current.push(marker)
     })
 
-    // Add polyline connecting day locations
-    if (dayLocations.length > 1) {
-      const latLngs = dayLocations.map((l) => [l.coordinates.lat, l.coordinates.lng] as [number, number])
+    // Route overlay mode: prominent colored route with direction arrows
+    if (showRouteOverlay && dayLocations.length > 1) {
+      const latLngs = dayLocations.map(
+        (l) => [l.coordinates.lat, l.coordinates.lng] as [number, number]
+      )
+
+      // Shadow line for depth
+      const shadow = L.polyline(latLngs, {
+        color: '#312e81',
+        weight: 7,
+        opacity: 0.2,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map)
+      polylinesRef.current.push(shadow)
+
+      // Main route line
+      const route = L.polyline(latLngs, {
+        color: '#4f46e5',
+        weight: 4,
+        opacity: 0.85,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map)
+      polylinesRef.current.push(route)
+
+      // Add direction arrows at segment midpoints
+      for (let i = 0; i < latLngs.length - 1; i++) {
+        const from = latLngs[i]
+        const to = latLngs[i + 1]
+        const midLat = (from[0] + to[0]) / 2
+        const midLng = (from[1] + to[1]) / 2
+        const angle = bearing(from, to)
+        const arrow = L.marker([midLat, midLng], {
+          icon: createArrowIcon(angle),
+          interactive: false,
+        }).addTo(map)
+        arrowsRef.current.push(arrow)
+      }
+    } else if (dayLocations.length > 1) {
+      // Default mode: simple dashed line
+      const latLngs = dayLocations.map(
+        (l) => [l.coordinates.lat, l.coordinates.lng] as [number, number]
+      )
       const polyline = L.polyline(latLngs, {
         color: '#6b7280',
         weight: 2,
@@ -162,7 +248,7 @@ export function TripMapInner({
     if (bounds.isValid()) {
       map.fitBounds(bounds, { padding: [50, 50] })
     }
-  }, [locations, onLocationSelect])
+  }, [locations, onLocationSelect, showRouteOverlay])
 
   const handleCloseDetail = () => {
     setSelectedLocation(null)

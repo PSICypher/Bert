@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import {
@@ -19,6 +19,8 @@ import PlanVersionTabs from '@/components/trip/PlanVersionTabs';
 import CurrencyWidget from '@/components/trip/CurrencyWidget';
 import { JourneyOverview } from '@/components/trip/JourneyOverview';
 import { DayCardGrid } from '@/components/trip/DayCardGrid';
+import { TripMap } from '@/components/trip/TripMap';
+import type { TripMapLocation } from '@/components/trip/TripMap';
 import type { Database } from '@/lib/database.types';
 
 // Dynamic imports for heavier components (using named exports)
@@ -102,6 +104,26 @@ export default function TripPage() {
 
   const activePlan = plans.find((p) => p.id === activePlanId) || null;
   const currencySymbol = activePlan?.currency === 'GBP' ? '£' : '$';
+
+  // Build map locations from itinerary days (only those with coordinates)
+  const mapLocations: TripMapLocation[] = useMemo(() => {
+    return days
+      .filter((day) => day.location_coordinates)
+      .map((day) => {
+        const coords = day.location_coordinates as { lat: number; lng: number };
+        const activities = (day.activities as Array<{ name: string }>) || [];
+        const details = activities.map((a) => a.name).join(' · ');
+        return {
+          id: day.id,
+          name: day.location,
+          coordinates: coords,
+          color: day.color || '#3b82f6',
+          type: 'day' as const,
+          dayNumber: day.day_number,
+          details: details || undefined,
+        };
+      });
+  }, [days]);
 
   // Fetch trip data
   const fetchTrip = useCallback(async () => {
@@ -297,6 +319,17 @@ export default function TripPage() {
           <div className="space-y-6">
             {/* Journey Overview */}
             {days.length > 0 && <JourneyOverview days={days} />}
+
+            {/* Route Map */}
+            {mapLocations.length > 0 && (
+              <TripMap
+                locations={mapLocations}
+                showRouteOverlay
+                height="500px"
+                title="Route Map"
+                subtitle={`${trip.destination} · ${mapLocations.length} stops`}
+              />
+            )}
 
             {/* Day Card Grid */}
             <DayCardGrid
