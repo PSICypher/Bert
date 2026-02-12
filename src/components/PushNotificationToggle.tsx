@@ -161,15 +161,27 @@ export default function PushNotificationToggle() {
       let subscription: PushSubscription;
       try {
         console.log('[Push] Subscribing to push...');
-        setStep('4');
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-        });
-        console.log('[Push] Subscribed successfully');
-      } catch (err) {
+        console.log('[Push] VAPID key length:', vapidPublicKey.length);
+        setStep('4a');
+
+        // Check if already subscribed
+        const existingSub = await registration.pushManager.getSubscription();
+        if (existingSub) {
+          console.log('[Push] Already subscribed, using existing');
+          subscription = existingSub;
+        } else {
+          setStep('4b');
+          console.log('[Push] Creating new subscription...');
+          subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+          });
+          console.log('[Push] Subscribed successfully');
+        }
+        setStep('4c');
+      } catch (err: any) {
         console.error('[Push] Push subscribe failed:', err);
-        setErrorMsg('Subscribe failed');
+        setErrorMsg(`Sub: ${err?.message || err?.name || String(err)}`);
         setStatus('error');
         setIsActioning(false);
         return;
