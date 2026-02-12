@@ -645,7 +645,7 @@ export function ChangeSheet({
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder="Ask for suggestions..."
-                  className="flex-1 px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                  className="flex-1 px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-purple-500"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && chatInput.trim()) {
                       sendChatMessage()
@@ -677,7 +677,7 @@ export function ChangeSheet({
                       type="text"
                       value={(editForm.name as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Marriott Hotel"
                     />
                   </div>
@@ -689,7 +689,7 @@ export function ChangeSheet({
                       <select
                         value={(editForm.type as string) || 'hotel'}
                         onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="hotel">Hotel</option>
                         <option value="resort">Resort</option>
@@ -707,7 +707,7 @@ export function ChangeSheet({
                         type="number"
                         value={(editForm.cost as number) || ''}
                         onChange={(e) => setEditForm({ ...editForm, cost: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                         min="0"
                         step="0.01"
                       />
@@ -721,7 +721,7 @@ export function ChangeSheet({
                       type="text"
                       value={(editForm.location as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       placeholder="City or area"
                     />
                   </div>
@@ -733,7 +733,7 @@ export function ChangeSheet({
                       type="text"
                       value={(editForm.address as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       placeholder="Full address"
                     />
                   </div>
@@ -746,7 +746,7 @@ export function ChangeSheet({
                         type="date"
                         value={(editForm.check_in as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, check_in: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
@@ -757,7 +757,7 @@ export function ChangeSheet({
                         type="date"
                         value={(editForm.check_out as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, check_out: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -770,7 +770,7 @@ export function ChangeSheet({
                         type="text"
                         value={(editForm.booking_reference as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, booking_reference: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                         placeholder="e.g., ABC123"
                       />
                     </div>
@@ -782,7 +782,7 @@ export function ChangeSheet({
                         type="url"
                         value={(editForm.booking_url as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, booking_url: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                         placeholder="https://..."
                       />
                     </div>
@@ -794,7 +794,7 @@ export function ChangeSheet({
                     <textarea
                       value={(editForm.notes as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 resize-none"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 resize-none"
                       rows={2}
                     />
                   </div>
@@ -824,7 +824,7 @@ export function ChangeSheet({
                       <select
                         value={(editForm.type as string) || 'car_rental'}
                         onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="car_rental">Car Rental</option>
                         <option value="flight">Flight</option>
@@ -843,7 +843,7 @@ export function ChangeSheet({
                         type="text"
                         value={(editForm.provider as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, provider: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                         placeholder="e.g., Hertz, United Airlines"
                       />
                     </div>
@@ -856,7 +856,7 @@ export function ChangeSheet({
                       type="text"
                       value={(editForm.vehicle as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, vehicle: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., SUV, Economy Class"
                     />
                   </div>
@@ -869,7 +869,7 @@ export function ChangeSheet({
                         type="text"
                         value={(editForm.pickup_location as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, pickup_location: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
@@ -880,7 +880,7 @@ export function ChangeSheet({
                         type="date"
                         value={(editForm.pickup_date as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, pickup_date: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -893,7 +893,7 @@ export function ChangeSheet({
                         type="text"
                         value={(editForm.dropoff_location as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, dropoff_location: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
@@ -904,7 +904,7 @@ export function ChangeSheet({
                         type="date"
                         value={(editForm.dropoff_date as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, dropoff_date: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -917,7 +917,7 @@ export function ChangeSheet({
                         type="number"
                         value={(editForm.cost as number) || ''}
                         onChange={(e) => setEditForm({ ...editForm, cost: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                         min="0"
                         step="0.01"
                       />
@@ -930,7 +930,7 @@ export function ChangeSheet({
                         type="text"
                         value={(editForm.reference_number as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, reference_number: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -941,7 +941,7 @@ export function ChangeSheet({
                     <textarea
                       value={(editForm.notes as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 resize-none"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 resize-none"
                       rows={2}
                     />
                   </div>
@@ -959,7 +959,7 @@ export function ChangeSheet({
                       type="text"
                       value={(editForm.item as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, item: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Theme Park Tickets"
                     />
                   </div>
@@ -971,7 +971,7 @@ export function ChangeSheet({
                       <select
                         value={(editForm.category as string) || 'other'}
                         onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="accommodation">Accommodation</option>
                         <option value="transport">Transport</option>
@@ -990,7 +990,7 @@ export function ChangeSheet({
                         type="number"
                         value={(editForm.amount as number) || ''}
                         onChange={(e) => setEditForm({ ...editForm, amount: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                         min="0"
                         step="0.01"
                       />
@@ -1029,7 +1029,7 @@ export function ChangeSheet({
                     <textarea
                       value={(editForm.notes as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 resize-none"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 resize-none"
                       rows={2}
                     />
                   </div>
@@ -1048,7 +1048,7 @@ export function ChangeSheet({
                         type="number"
                         value={(editForm.day_number as number) || 1}
                         onChange={(e) => setEditForm({ ...editForm, day_number: parseInt(e.target.value) || 1 })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                         min="1"
                       />
                     </div>
@@ -1060,7 +1060,7 @@ export function ChangeSheet({
                         type="date"
                         value={(editForm.date as string) || ''}
                         onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -1072,7 +1072,7 @@ export function ChangeSheet({
                       type="text"
                       value={(editForm.location as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       placeholder="City or area"
                     />
                   </div>
@@ -1085,7 +1085,7 @@ export function ChangeSheet({
                         type="text"
                         value={(editForm.icon as string) || '📍'}
                         onChange={(e) => setEditForm({ ...editForm, icon: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                         placeholder="Emoji icon"
                       />
                     </div>
@@ -1109,7 +1109,7 @@ export function ChangeSheet({
                       type="text"
                       value={(editForm.drive_time as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, drive_time: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., 2h 30m"
                     />
                   </div>
@@ -1120,7 +1120,7 @@ export function ChangeSheet({
                     <textarea
                       value={(editForm.notes as string) || ''}
                       onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 resize-none"
+                      className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 resize-none"
                       rows={2}
                     />
                   </div>
@@ -1141,7 +1141,7 @@ export function ChangeSheet({
                   value={linkUrl}
                   onChange={(e) => setLinkUrl(e.target.value)}
                   placeholder="https://booking.com/..."
-                  className="flex-1 px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-3 py-2 border rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   onClick={extractFromLink}
