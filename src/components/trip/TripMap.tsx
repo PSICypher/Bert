@@ -22,18 +22,20 @@ interface TripMapProps {
   locations: TripMapLocation[]
   onLocationSelect?: (location: TripMapLocation | null) => void
   className?: string
+  height?: string
+  title?: string
 }
 
-export function TripMap({ locations, onLocationSelect, className }: TripMapProps) {
+export function TripMap({ locations, onLocationSelect, className, height = '400px', title = 'Trip Map' }: TripMapProps) {
   return (
     <div className={`bg-white rounded-lg border overflow-hidden ${className || ''}`}>
       <div className="p-3 border-b bg-gray-50">
-        <h3 className="font-medium text-gray-900">Trip Map</h3>
+        <h3 className="font-medium text-gray-900">{title}</h3>
         <p className="text-xs text-gray-500 mt-0.5">
           {locations.length} location{locations.length !== 1 ? 's' : ''}
         </p>
       </div>
-      <div className="h-[400px]">
+      <div style={{ height }}>
         <TripMapInner
           locations={locations}
           onLocationSelect={onLocationSelect}

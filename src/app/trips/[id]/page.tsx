@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import {
@@ -19,6 +19,8 @@ import PlanVersionTabs from '@/components/trip/PlanVersionTabs';
 import CurrencyWidget from '@/components/trip/CurrencyWidget';
 import { JourneyOverview } from '@/components/trip/JourneyOverview';
 import { DayCardGrid } from '@/components/trip/DayCardGrid';
+import { TripMap } from '@/components/trip/TripMap';
+import type { TripMapLocation } from '@/components/trip/TripMap';
 import type { Database } from '@/lib/database.types';
 
 // Dynamic imports for heavier components (using named exports)
@@ -65,7 +67,7 @@ type Transport = Database['public']['Tables']['transport']['Row'];
 type Cost = Database['public']['Tables']['costs']['Row'];
 type Decision = Database['public']['Tables']['decisions']['Row'];
 
-type TabId = 'overview' | 'research' | 'checklist' | 'travel-docs' | 'documents' | 'packing' | 'ai-insights';
+type TabId = 'overview' | 'map' | 'research' | 'checklist' | 'travel-docs' | 'documents' | 'packing' | 'ai-insights';
 
 interface Tab {
   id: TabId;
@@ -75,6 +77,7 @@ interface Tab {
 
 const TABS: Tab[] = [
   { id: 'overview', label: 'Overview', icon: LayoutGrid },
+  { id: 'map', label: 'Route Map', icon: Map },
   { id: 'research', label: 'Research', icon: Search },
   { id: 'checklist', label: 'Checklist', icon: ListChecks },
   { id: 'travel-docs', label: 'Travel Docs', icon: Plane },
@@ -82,6 +85,63 @@ const TABS: Tab[] = [
   { id: 'packing', label: 'Packing', icon: Package },
   { id: 'ai-insights', label: 'AI Insights', icon: Sparkles },
 ];
+
+function RouteMapTab({ days, accommodations }: { days: ItineraryDay[]; accommodations: Accommodation[] }) {
+  const mapLocations = useMemo(() => {
+    const locations: TripMapLocation[] = []
+    const sortedDays = [...days].sort((a, b) => a.day_number - b.day_number)
+
+    // Add day locations (only those with coordinates, deduplicate by unique coordinate)
+    const seenCoords = new Set<string>()
+    for (const day of sortedDays) {
+      const coords = day.location_coordinates as { lat: number; lng: number } | null
+      if (!coords) continue
+      const key = `${coords.lat},${coords.lng}`
+      if (seenCoords.has(key)) {
+        // Find the existing location and update its details to show the day range
+        const existing = locations.find(
+          (l) => l.type === 'day' && l.coordinates.lat === coords.lat && l.coordinates.lng === coords.lng
+        )
+        if (existing) {
+          existing.details = `Days ${existing.dayNumber}–${day.day_number}`
+        }
+        continue
+      }
+      seenCoords.add(key)
+      locations.push({
+        id: day.id,
+        name: day.location,
+        coordinates: { lat: coords.lat, lng: coords.lng },
+        color: day.color || '#3b82f6',
+        type: 'day',
+        dayNumber: day.day_number,
+        details: `Day ${day.day_number}`,
+      })
+    }
+
+    return locations
+  }, [days, accommodations])
+
+  if (days.length === 0) {
+    return (
+      <div className="bg-white rounded-lg border p-8 text-center text-gray-500">
+        No itinerary days to display on the map yet.
+      </div>
+    )
+  }
+
+  if (mapLocations.length === 0) {
+    return (
+      <div className="bg-white rounded-lg border p-8 text-center text-gray-500">
+        No locations with coordinates available for the map.
+      </div>
+    )
+  }
+
+  return (
+    <TripMap locations={mapLocations} height="600px" title="Route Map" />
+  )
+}
 
 export default function TripPage() {
   const params = useParams();
@@ -308,6 +368,10 @@ export default function TripPage() {
               onChangeDay={handleChangeDay}
             />
           </div>
+        )}
+
+        {activeTab === 'map' && (
+          <RouteMapTab days={days} accommodations={accommodations} />
         )}
 
         {activeTab === 'research' && (

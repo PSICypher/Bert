@@ -149,11 +149,19 @@ export function TripMapInner({
     // Add polyline connecting day locations
     if (dayLocations.length > 1) {
       const latLngs = dayLocations.map((l) => [l.coordinates.lat, l.coordinates.lng] as [number, number])
+      // Background line for contrast
+      const bgPolyline = L.polyline(latLngs, {
+        color: '#1e3a5f',
+        weight: 5,
+        opacity: 0.3,
+      }).addTo(map)
+      polylinesRef.current.push(bgPolyline)
+      // Foreground dashed line
       const polyline = L.polyline(latLngs, {
-        color: '#6b7280',
-        weight: 2,
-        opacity: 0.6,
-        dashArray: '5, 10',
+        color: '#3b82f6',
+        weight: 3,
+        opacity: 0.8,
+        dashArray: '8, 12',
       }).addTo(map)
       polylinesRef.current.push(polyline)
     }
