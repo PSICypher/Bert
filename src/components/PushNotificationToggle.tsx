@@ -112,54 +112,35 @@ export default function PushNotificationToggle() {
         console.log('[Push] Getting service worker...');
         setStep('3a');
 
-        // Register SW (will return existing if already registered)
-        registration = await navigator.serviceWorker.register('/sw.js');
-        console.log('[Push] SW registration obtained');
+        // Use navigator.serviceWorker.ready - this waits for an active SW
+        // Race with a timeout
+        registration = await Promise.race([
+          navigator.serviceWorker.ready,
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('SW ready timeout')), 8000)
+          )
+        ]);
+
         setStep('3b');
+        console.log('[Push] SW ready, active:', !!registration.active);
 
-        // Wait for SW to become active
+        // If still no active SW, try registering explicitly
         if (!registration.active) {
-          console.log('[Push] Waiting for SW to activate...');
+          console.log('[Push] No active SW, registering...');
+          setStep('3c');
+          await navigator.serviceWorker.register('/sw.js');
 
-          await new Promise<void>((resolve, reject) => {
-            const timeout = setTimeout(() => {
-              reject(new Error('SW activation timeout'));
-            }, 10000);
-
-            const checkActive = () => {
-              if (registration.active) {
-                clearTimeout(timeout);
-                resolve();
-                return true;
-              }
-              return false;
-            };
-
-            // Check immediately
-            if (checkActive()) return;
-
-            // Listen for state changes
-            const sw = registration.installing || registration.waiting;
-            if (sw) {
-              sw.addEventListener('statechange', () => {
-                console.log('[Push] SW state:', sw.state);
-                if (sw.state === 'activated') {
-                  checkActive();
-                }
-              });
-            }
-
-            // Also poll as backup
-            const interval = setInterval(() => {
-              if (checkActive()) {
-                clearInterval(interval);
-              }
-            }, 500);
-          });
+          // Wait again
+          registration = await Promise.race([
+            navigator.serviceWorker.ready,
+            new Promise<never>((_, reject) =>
+              setTimeout(() => reject(new Error('SW still not active')), 5000)
+            )
+          ]);
         }
 
-        setStep('3c');
-        console.log('[Push] SW active:', registration.active?.state);
+        setStep('3d');
+        console.log('[Push] Final SW state:', registration.active?.state);
       } catch (err: any) {
         console.error('[Push] SW failed:', err);
         setErrorMsg(`SW: ${err?.message || String(err)}`);
