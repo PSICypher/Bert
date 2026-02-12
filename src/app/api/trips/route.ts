@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@/lib/supabase-server';
 
+// Collaborators who auto-share all trips with each other
+const COLLABORATORS = [
+  'schalk.vdmerwe@gmail.com',
+  'vdmkelz@gmail.com',
+];
+
 /**
  * GET /api/trips
  * List all trips for the authenticated user (owned or shared)
@@ -81,6 +87,22 @@ export async function POST(request: NextRequest) {
   if (error) {
     console.error('[API] POST /api/trips error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Auto-share with other collaborators
+  const userEmail = user.email?.toLowerCase();
+  if (userEmail && COLLABORATORS.includes(userEmail)) {
+    const otherCollaborators = COLLABORATORS.filter(email => email !== userEmail);
+
+    for (const collaboratorEmail of otherCollaborators) {
+      await supabase
+        .from('trip_shares')
+        .insert({
+          trip_id: data.id,
+          shared_with_email: collaboratorEmail,
+          permission: 'edit',
+        });
+    }
   }
 
   return NextResponse.json(data, { status: 201 });
