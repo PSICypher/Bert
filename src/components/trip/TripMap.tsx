@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { Loader2 } from 'lucide-react'
-import type { TripMapLocation } from './TripMapInner'
+import type { TripMapLocation, TransportSegment } from './TripMapInner'
 
 // Dynamically import TripMapInner with SSR disabled
 // Leaflet requires browser APIs and can't run on the server
@@ -20,6 +20,7 @@ const TripMapInner = dynamic(
 
 interface TripMapProps {
   locations: TripMapLocation[]
+  transportSegments?: TransportSegment[]
   onLocationSelect?: (location: TripMapLocation | null) => void
   className?: string
   showRouteOverlay?: boolean
@@ -30,6 +31,7 @@ interface TripMapProps {
 
 export function TripMap({
   locations,
+  transportSegments,
   onLocationSelect,
   className,
   showRouteOverlay,
@@ -48,6 +50,7 @@ export function TripMap({
       <div style={{ height }}>
         <TripMapInner
           locations={locations}
+          transportSegments={transportSegments}
           onLocationSelect={onLocationSelect}
           showRouteOverlay={showRouteOverlay}
           className="h-full"
@@ -57,5 +60,5 @@ export function TripMap({
   )
 }
 
-// Re-export the location type for convenience
-export type { TripMapLocation }
+// Re-export types for convenience
+export type { TripMapLocation, TransportSegment }

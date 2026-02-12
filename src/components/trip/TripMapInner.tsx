@@ -15,8 +15,18 @@ export interface TripMapLocation {
   details?: string
 }
 
+export interface TransportSegment {
+  id: string
+  from: { lat: number; lng: number }
+  to: { lat: number; lng: number }
+  fromName: string
+  toName: string
+  type: string // 'boat', 'ferry', 'cruise', etc.
+}
+
 interface TripMapInnerProps {
   locations: TripMapLocation[]
+  transportSegments?: TransportSegment[]
   onLocationSelect?: (location: TripMapLocation | null) => void
   className?: string
   showRouteOverlay?: boolean
@@ -57,6 +67,7 @@ function bearing(from: [number, number], to: [number, number]): number {
 
 export function TripMapInner({
   locations,
+  transportSegments = [],
   onLocationSelect,
   className = '',
   showRouteOverlay = false,
@@ -244,11 +255,44 @@ export function TripMapInner({
       polylinesRef.current.push(polyline)
     }
 
+    // Draw transport segments (boat/ferry/cruise as dashed blue lines)
+    for (const seg of transportSegments) {
+      const segLatLngs: [number, number][] = [
+        [seg.from.lat, seg.from.lng],
+        [seg.to.lat, seg.to.lng],
+      ]
+      bounds.extend(segLatLngs[0])
+      bounds.extend(segLatLngs[1])
+
+      const transportLine = L.polyline(segLatLngs, {
+        color: '#2563eb',
+        weight: 3,
+        opacity: 0.8,
+        dashArray: '8, 8',
+      }).addTo(map)
+      transportLine.bindPopup(
+        `<strong>${seg.type.charAt(0).toUpperCase() + seg.type.slice(1)}</strong><br/>${seg.fromName} → ${seg.toName}`
+      )
+      polylinesRef.current.push(transportLine)
+
+      // Arrow at midpoint
+      const mid: [number, number] = [
+        (segLatLngs[0][0] + segLatLngs[1][0]) / 2,
+        (segLatLngs[0][1] + segLatLngs[1][1]) / 2,
+      ]
+      const angle = bearing(segLatLngs[0], segLatLngs[1])
+      const arrow = L.marker(mid, {
+        icon: createArrowIcon(angle),
+        interactive: false,
+      }).addTo(map)
+      arrowsRef.current.push(arrow)
+    }
+
     // Fit bounds with padding
     if (bounds.isValid()) {
       map.fitBounds(bounds, { padding: [50, 50] })
     }
-  }, [locations, onLocationSelect, showRouteOverlay])
+  }, [locations, transportSegments, onLocationSelect, showRouteOverlay])
 
   const handleCloseDetail = () => {
     setSelectedLocation(null)
@@ -282,6 +326,12 @@ export function TripMapInner({
               </div>
             )
           })}
+          {transportSegments.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="w-6 border-t-2 border-dashed border-blue-600" />
+              <span className="text-xs text-gray-600">Boat / Ferry</span>
+            </div>
+          )}
         </div>
       </div>
 
