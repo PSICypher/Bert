@@ -106,43 +106,42 @@ export default function PushNotificationToggle() {
         return;
       }
 
-      // Register service worker
+      // Get service worker registration - try existing first, then register
       let registration: ServiceWorkerRegistration;
       try {
-        console.log('[Push] Registering service worker...');
+        console.log('[Push] Getting service worker...');
         setStep('3a');
-        registration = await navigator.serviceWorker.register('/sw.js');
-        console.log('[Push] SW registered, state:', registration.active?.state);
-        setStep('3b');
 
-        // Wait for activation with timeout (don't use .ready which can hang)
+        // First try to get existing registration
+        const existingRegs = await navigator.serviceWorker.getRegistrations();
+        console.log('[Push] Existing registrations:', existingRegs.length);
+
+        if (existingRegs.length > 0) {
+          registration = existingRegs[0];
+          console.log('[Push] Using existing SW registration');
+        } else {
+          // Register new SW
+          setStep('3b');
+          console.log('[Push] Registering new SW...');
+          registration = await navigator.serviceWorker.register('/sw.js');
+          console.log('[Push] SW registered');
+        }
+
+        setStep('3c');
+
+        // Wait briefly for activation if needed
         if (!registration.active) {
-          console.log('[Push] Waiting for SW to activate...');
+          console.log('[Push] Waiting for SW activation...');
           await new Promise<void>((resolve) => {
-            const timeout = setTimeout(() => {
-              console.log('[Push] SW activation timeout, proceeding anyway');
-              resolve();
-            }, 2000);
-
-            if (registration.installing || registration.waiting) {
-              const sw = registration.installing || registration.waiting;
-              sw?.addEventListener('statechange', () => {
-                if (sw.state === 'activated') {
-                  clearTimeout(timeout);
-                  resolve();
-                }
-              });
-            } else {
-              clearTimeout(timeout);
-              resolve();
-            }
+            setTimeout(resolve, 1500);
           });
         }
-        setStep('3c');
-        console.log('[Push] SW ready to use');
+
+        setStep('3d');
+        console.log('[Push] SW ready, active:', !!registration.active);
       } catch (err: any) {
-        console.error('[Push] SW registration failed:', err);
-        setErrorMsg(`SW: ${err?.message || 'failed'}`);
+        console.error('[Push] SW failed:', err);
+        setErrorMsg(`SW: ${err?.message || String(err)}`);
         setStatus('error');
         setIsActioning(false);
         return;
