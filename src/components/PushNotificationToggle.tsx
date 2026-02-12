@@ -293,19 +293,24 @@ export default function PushNotificationToggle() {
   // Error state
   if (status === 'error') {
     return (
-      <button
-        onClick={handleClick}
-        disabled={isActioning}
-        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-red-100 text-red-600 text-xs max-w-[120px]"
-        title={errorMsg || 'Error - tap to retry'}
-      >
-        {isActioning ? (
-          <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
-        ) : (
-          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+      <div className="flex flex-col items-end gap-1">
+        <button
+          onClick={handleClick}
+          disabled={isActioning}
+          className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-red-100 text-red-600 text-xs"
+          title={errorMsg || 'Error - tap to retry'}
+        >
+          {isActioning ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
+          ) : (
+            <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+          )}
+          <span>Retry</span>
+        </button>
+        {errorMsg && (
+          <span className="text-[9px] text-red-500 max-w-[200px] text-right">{errorMsg}</span>
         )}
-        {errorMsg && <span className="truncate text-[10px]">{errorMsg}</span>}
-      </button>
+      </div>
     );
   }
 
