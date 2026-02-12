@@ -20,78 +20,50 @@ export default function PushNotificationToggle() {
   const [status, setStatus] = useState<Status>('loading');
   const [isActioning, setIsActioning] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
-  const [step, setStep] = useState<string>('');
 
   useEffect(() => {
     checkStatus();
   }, []);
 
   async function checkStatus() {
-    console.log('[Push] Checking status...');
-
     if (typeof window === 'undefined') {
-      console.log('[Push] No window - unsupported');
       setStatus('unsupported');
       return;
     }
 
-    if (!('serviceWorker' in navigator)) {
-      console.log('[Push] No serviceWorker support');
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
       setStatus('unsupported');
       return;
     }
 
-    if (!('PushManager' in window)) {
-      console.log('[Push] No PushManager support');
-      setStatus('unsupported');
-      return;
-    }
-
-    if (!('Notification' in window)) {
-      console.log('[Push] No Notification support');
-      setStatus('unsupported');
-      return;
-    }
-
-    // Check permission
-    console.log('[Push] Notification.permission:', Notification.permission);
     if (Notification.permission === 'denied') {
       setStatus('denied');
       return;
     }
 
-    // Check if subscribed
     try {
       const registrations = await navigator.serviceWorker.getRegistrations();
-      console.log('[Push] SW registrations:', registrations.length);
       for (const reg of registrations) {
         const sub = await reg.pushManager.getSubscription();
         if (sub) {
-          console.log('[Push] Found existing subscription');
           setStatus('on');
           return;
         }
       }
-      console.log('[Push] No existing subscription, status: off');
       setStatus('off');
     } catch (err) {
-      console.error('[Push] Error checking status:', err);
+      console.error('Error checking push status:', err);
       setStatus('off');
     }
   }
 
   async function enableNotifications() {
-    console.log('[Push] Enable notifications starting...');
     setIsActioning(true);
     setErrorMsg('');
-    setStep('1');
 
     try {
       // Request permission
-      console.log('[Push] Requesting permission...');
-      setStep('2');
       const permission = await Notification.requestPermission();
-      console.log('[Push] Permission result:', permission);
 
       if (permission === 'denied') {
         setStatus('denied');
@@ -100,29 +72,20 @@ export default function PushNotificationToggle() {
       }
 
       if (permission !== 'granted') {
-        console.log('[Push] Permission not granted');
         setStatus('off');
         setIsActioning(false);
         return;
       }
 
-      // Get service worker registration
+      // Register service worker
       let registration: ServiceWorkerRegistration;
       try {
-        console.log('[Push] Registering service worker...');
-        setStep('3a');
-
-        // Register minimal push SW (not the full next-pwa one)
         registration = await navigator.serviceWorker.register('/push-sw.js');
-        console.log('[Push] Registered, active:', !!registration.active, 'installing:', !!registration.installing, 'waiting:', !!registration.waiting);
-        setStep('3b');
 
         // Poll until we have an active SW (max 15 seconds)
         const startTime = Date.now();
         while (!registration.active && Date.now() - startTime < 15000) {
-          console.log('[Push] Waiting for activation...');
           await new Promise(r => setTimeout(r, 1000));
-          // Re-fetch registration
           const regs = await navigator.serviceWorker.getRegistrations();
           if (regs.length > 0 && regs[0].active) {
             registration = regs[0];
@@ -130,57 +93,33 @@ export default function PushNotificationToggle() {
           }
         }
 
-        setStep('3c');
-
         if (!registration.active) {
-          // Last resort - try to use it anyway
-          console.log('[Push] No active SW after waiting, attempting anyway...');
-        } else {
-          console.log('[Push] SW active:', registration.active.state);
+          throw new Error('Service worker failed to activate');
         }
       } catch (err: any) {
-        console.error('[Push] SW failed:', err);
-        setErrorMsg(`SW: ${err?.message || String(err)}`);
+        setErrorMsg(err?.message || 'SW failed');
         setStatus('error');
         setIsActioning(false);
         return;
       }
 
-      // Get VAPID key - use env var or fallback to hardcoded value
-      // The public key is safe to expose (it's meant to be public)
-      const FALLBACK_VAPID_KEY = 'BJvHL-34fv7HQw_km9bBIpGmI-DRIfEhq_FZCSKLLWzUZb_9qZPl8g3iXtucX0CzRFv6n_2NRjdB-lg6QLVI-TU';
-      const rawVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || FALLBACK_VAPID_KEY;
-      console.log('[Push] VAPID key from env:', !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY, 'using fallback:', !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY);
-
-      // Clean the key - remove whitespace, newlines, and any trailing chars
-      const vapidPublicKey = rawVapidKey.trim().replace(/\\n/g, '').replace(/\n/g, '');
-      console.log('[Push] Cleaned VAPID key length:', vapidPublicKey.length);
+      // VAPID key (public key is safe to expose)
+      const VAPID_KEY = 'BJvHL-34fv7HQw_km9bBIpGmI-DRIfEhq_FZCSKLLWzUZb_9qZPl8g3iXtucX0CzRFv6n_2NRjdB-lg6QLVI-TU';
 
       // Subscribe to push
       let subscription: PushSubscription;
       try {
-        console.log('[Push] Subscribing to push...');
-        console.log('[Push] VAPID key length:', vapidPublicKey.length);
-        setStep('4a');
-
-        // Check if already subscribed
         const existingSub = await registration.pushManager.getSubscription();
         if (existingSub) {
-          console.log('[Push] Already subscribed, using existing');
           subscription = existingSub;
         } else {
-          setStep('4b');
-          console.log('[Push] Creating new subscription...');
           subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+            applicationServerKey: urlBase64ToUint8Array(VAPID_KEY),
           });
-          console.log('[Push] Subscribed successfully');
         }
-        setStep('4c');
       } catch (err: any) {
-        console.error('[Push] Push subscribe failed:', err);
-        setErrorMsg(`Sub: ${err?.message || err?.name || String(err)}`);
+        setErrorMsg(err?.message || 'Subscribe failed');
         setStatus('error');
         setIsActioning(false);
         return;
@@ -195,8 +134,6 @@ export default function PushNotificationToggle() {
           throw new Error('Missing subscription keys');
         }
 
-        console.log('[Push] Sending subscription to server...');
-        setStep('5');
         const res = await fetch('/api/push/subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -210,21 +147,16 @@ export default function PushNotificationToggle() {
         });
 
         if (!res.ok) {
-          const text = await res.text();
-          console.error('[Push] Server error:', res.status, text);
           throw new Error('Server rejected subscription');
         }
 
-        console.log('[Push] Server accepted subscription');
         setStatus('on');
       } catch (err) {
-        console.error('[Push] Server subscribe failed:', err);
-        // Still mark as on locally since browser is subscribed
+        // Still mark as on since browser is subscribed
         setStatus('on');
       }
-    } catch (err) {
-      console.error('[Push] Enable notifications failed:', err);
-      setErrorMsg(String(err));
+    } catch (err: any) {
+      setErrorMsg(err?.message || 'Failed');
       setStatus('error');
     }
 
@@ -239,7 +171,6 @@ export default function PushNotificationToggle() {
       for (const reg of registrations) {
         const sub = await reg.pushManager.getSubscription();
         if (sub) {
-          // Tell server first
           try {
             await fetch('/api/push/unsubscribe', {
               method: 'POST',
@@ -247,15 +178,13 @@ export default function PushNotificationToggle() {
               body: JSON.stringify({ endpoint: sub.endpoint }),
             });
           } catch (err) {
-            console.error('Server unsubscribe failed:', err);
+            // Continue anyway
           }
-          // Unsubscribe locally
           await sub.unsubscribe();
         }
       }
       setStatus('off');
     } catch (err) {
-      console.error('Disable notifications failed:', err);
       setStatus('error');
     }
 
@@ -272,12 +201,10 @@ export default function PushNotificationToggle() {
     }
   }
 
-  // Don't show if unsupported
   if (status === 'loading' || status === 'unsupported') {
     return null;
   }
 
-  // Denied - show disabled state with tap to see instructions
   if (status === 'denied') {
     return (
       <button
@@ -290,7 +217,6 @@ export default function PushNotificationToggle() {
     );
   }
 
-  // Error state
   if (status === 'error') {
     return (
       <div className="flex flex-col items-end gap-1">
@@ -301,9 +227,9 @@ export default function PushNotificationToggle() {
           title={errorMsg || 'Error - tap to retry'}
         >
           {isActioning ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
           ) : (
-            <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+            <AlertCircle className="w-3.5 h-3.5" />
           )}
           <span>Retry</span>
         </button>
@@ -314,7 +240,6 @@ export default function PushNotificationToggle() {
     );
   }
 
-  // Normal on/off states
   const isOn = status === 'on';
 
   return (
@@ -329,10 +254,7 @@ export default function PushNotificationToggle() {
       title={isOn ? 'Notifications ON - tap to turn off' : 'Tap to enable notifications'}
     >
       {isActioning ? (
-        <>
-          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          {step && <span className="text-[10px]">{step}</span>}
-        </>
+        <Loader2 className="w-3.5 h-3.5 animate-spin" />
       ) : isOn ? (
         <BellRing className="w-3.5 h-3.5" />
       ) : (
