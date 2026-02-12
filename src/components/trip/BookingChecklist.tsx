@@ -16,6 +16,7 @@ import {
   FileText,
   Sparkles,
   AlertTriangle,
+  RefreshCw,
 } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 
@@ -101,6 +102,7 @@ export function BookingChecklist({
   const [form, setForm] = useState<FormData>(emptyForm)
   const [saving, setSaving] = useState(false)
   const [seeding, setSeeding] = useState(false)
+  const [syncing, setSyncing] = useState(false)
   const [expandedCategories, setExpandedCategories] = useState<Set<Category>>(
     new Set(CATEGORIES.map((c) => c.value))
   )
@@ -386,6 +388,219 @@ export function BookingChecklist({
     }
   }
 
+  /**
+   * Sync from Plan - UPDATE existing linked items
+   * This function updates existing checklist items that are linked to plan items.
+   * It NEVER deletes items - only updates fields from the source.
+   * It preserves user-entered data like amount_paid, notes, payment_due_date.
+   */
+  const syncFromPlan = async () => {
+    setSyncing(true)
+    let updatedCount = 0
+    let addedCount = 0
+
+    try {
+      // Get existing source_ids to find items to update
+      const existingSourceIds = new Set(
+        items.filter((i) => i.source_id).map((i) => `${i.source_type}-${i.source_id}`)
+      )
+
+      // Build lookup map for existing items
+      const itemsBySource = new Map<string, ChecklistItem>()
+      for (const item of items) {
+        if (item.source_id) {
+          itemsBySource.set(`${item.source_type}-${item.source_id}`, item)
+        }
+      }
+
+      const itemsToAdd: Partial<ChecklistItem>[] = []
+      const itemsToUpdate: { id: string; updates: Partial<ChecklistItem> }[] = []
+
+      // Process accommodations
+      for (const acc of accommodations) {
+        const key = `accommodation-${acc.id}`
+        const existing = itemsBySource.get(key)
+
+        if (existing) {
+          // Check if update needed
+          const newName = acc.name
+          const newDesc = `${acc.type} - ${acc.nights} nights`
+          const newCost = acc.cost || 0
+          const newRef = acc.booking_reference
+          const newUrl = acc.booking_url
+          const newStatus = acc.is_confirmed ? 'confirmed' : existing.booking_status
+
+          if (
+            existing.name !== newName ||
+            existing.description !== newDesc ||
+            existing.total_cost !== newCost ||
+            existing.booking_reference !== newRef ||
+            existing.booking_url !== newUrl ||
+            (acc.is_confirmed && existing.booking_status !== 'confirmed')
+          ) {
+            itemsToUpdate.push({
+              id: existing.id,
+              updates: {
+                name: newName,
+                description: newDesc,
+                total_cost: newCost,
+                booking_reference: newRef,
+                booking_url: newUrl,
+                booking_status: newStatus as BookingStatus,
+              },
+            })
+          }
+        } else {
+          // New item to add
+          itemsToAdd.push({
+            plan_version_id: planVersionId,
+            category: 'accommodation',
+            name: acc.name,
+            description: `${acc.type} - ${acc.nights} nights`,
+            source_type: 'accommodation',
+            source_id: acc.id,
+            total_cost: acc.cost || 0,
+            booking_status: acc.is_confirmed ? 'confirmed' : 'not_booked',
+            booking_reference: acc.booking_reference,
+            booking_url: acc.booking_url,
+          })
+        }
+      }
+
+      // Process transport
+      for (const t of transport) {
+        const key = `transport-${t.id}`
+        const existing = itemsBySource.get(key)
+
+        if (existing) {
+          const newName = `${t.type}${t.provider ? ` - ${t.provider}` : ''}`
+          const newDesc = t.vehicle || null
+          const newCost = t.cost || 0
+          const newRef = t.reference_number
+          const newUrl = t.booking_url
+          const newStatus = t.is_confirmed ? 'confirmed' : existing.booking_status
+
+          if (
+            existing.name !== newName ||
+            existing.description !== newDesc ||
+            existing.total_cost !== newCost ||
+            existing.booking_reference !== newRef ||
+            existing.booking_url !== newUrl ||
+            (t.is_confirmed && existing.booking_status !== 'confirmed')
+          ) {
+            itemsToUpdate.push({
+              id: existing.id,
+              updates: {
+                name: newName,
+                description: newDesc,
+                total_cost: newCost,
+                booking_reference: newRef,
+                booking_url: newUrl,
+                booking_status: newStatus as BookingStatus,
+              },
+            })
+          }
+        } else {
+          itemsToAdd.push({
+            plan_version_id: planVersionId,
+            category: 'transport',
+            name: `${t.type}${t.provider ? ` - ${t.provider}` : ''}`,
+            description: t.vehicle || null,
+            source_type: 'transport',
+            source_id: t.id,
+            total_cost: t.cost || 0,
+            booking_status: t.is_confirmed ? 'confirmed' : 'not_booked',
+            booking_reference: t.reference_number,
+            booking_url: t.booking_url,
+          })
+        }
+      }
+
+      // Process costs
+      for (const cost of costs) {
+        const key = `cost-${cost.id}`
+        const existing = itemsBySource.get(key)
+
+        if (existing) {
+          const newName = cost.item
+          const newCost = cost.amount
+          const newStatus = cost.is_paid ? 'confirmed' : existing.booking_status
+
+          if (
+            existing.name !== newName ||
+            existing.total_cost !== newCost ||
+            (cost.is_paid && existing.booking_status !== 'confirmed')
+          ) {
+            itemsToUpdate.push({
+              id: existing.id,
+              updates: {
+                name: newName,
+                total_cost: newCost,
+                booking_status: newStatus as BookingStatus,
+              },
+            })
+          }
+        } else {
+          const category: Category =
+            cost.category === 'activities' ? 'activity' :
+            cost.category === 'tickets' ? 'tickets' : 'other'
+
+          itemsToAdd.push({
+            plan_version_id: planVersionId,
+            category,
+            name: cost.item,
+            source_type: 'cost',
+            source_id: cost.id,
+            total_cost: cost.amount,
+            booking_status: cost.is_paid ? 'confirmed' : 'not_booked',
+          })
+        }
+      }
+
+      // Apply updates
+      for (const { id, updates } of itemsToUpdate) {
+        const res = await fetch(`/api/checklist/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates),
+        })
+        if (res.ok) {
+          const updated = await res.json()
+          setItems((prev) => prev.map((i) => (i.id === id ? updated : i)))
+          updatedCount++
+        }
+      }
+
+      // Add new items
+      for (const item of itemsToAdd) {
+        const res = await fetch('/api/checklist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item),
+        })
+        if (res.ok) {
+          const created = await res.json()
+          setItems((prev) => [...prev, created])
+          addedCount++
+        }
+      }
+
+      if (updatedCount > 0 || addedCount > 0) {
+        const parts = []
+        if (updatedCount > 0) parts.push(`${updatedCount} updated`)
+        if (addedCount > 0) parts.push(`${addedCount} added`)
+        alert(`Sync complete: ${parts.join(', ')}`)
+      } else {
+        alert('Checklist is already in sync with plan')
+      }
+    } catch (err) {
+      console.error('Error syncing from plan:', err)
+      alert('Error syncing from plan')
+    } finally {
+      setSyncing(false)
+    }
+  }
+
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return null
     return new Date(dateStr).toLocaleDateString('en-GB', {
@@ -413,6 +628,21 @@ export function BookingChecklist({
             <p className="text-sm text-gray-500">{planName}</p>
           </div>
           <div className="flex items-center gap-2">
+            {items.length > 0 && items.some((i) => i.source_id) && (
+              <button
+                onClick={syncFromPlan}
+                disabled={syncing}
+                className="px-3 py-2 text-sm bg-green-50 text-green-700 hover:bg-green-100 rounded-lg flex items-center gap-2 disabled:opacity-50"
+                title="Update existing items from plan changes"
+              >
+                {syncing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-4 h-4" />
+                )}
+                Sync
+              </button>
+            )}
             <button
               onClick={seedFromPlan}
               disabled={seeding}
