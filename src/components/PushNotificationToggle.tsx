@@ -109,38 +109,35 @@ export default function PushNotificationToggle() {
       // Get service worker registration
       let registration: ServiceWorkerRegistration;
       try {
-        console.log('[Push] Getting service worker...');
+        console.log('[Push] Registering service worker...');
         setStep('3a');
 
-        // Use navigator.serviceWorker.ready - this waits for an active SW
-        // Race with a timeout
-        registration = await Promise.race([
-          navigator.serviceWorker.ready,
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('SW ready timeout')), 8000)
-          )
-        ]);
-
+        // Register the SW
+        registration = await navigator.serviceWorker.register('/sw.js');
+        console.log('[Push] Registered, active:', !!registration.active, 'installing:', !!registration.installing, 'waiting:', !!registration.waiting);
         setStep('3b');
-        console.log('[Push] SW ready, active:', !!registration.active);
 
-        // If still no active SW, try registering explicitly
-        if (!registration.active) {
-          console.log('[Push] No active SW, registering...');
-          setStep('3c');
-          await navigator.serviceWorker.register('/sw.js');
-
-          // Wait again
-          registration = await Promise.race([
-            navigator.serviceWorker.ready,
-            new Promise<never>((_, reject) =>
-              setTimeout(() => reject(new Error('SW still not active')), 5000)
-            )
-          ]);
+        // Poll until we have an active SW (max 15 seconds)
+        const startTime = Date.now();
+        while (!registration.active && Date.now() - startTime < 15000) {
+          console.log('[Push] Waiting for activation...');
+          await new Promise(r => setTimeout(r, 1000));
+          // Re-fetch registration
+          const regs = await navigator.serviceWorker.getRegistrations();
+          if (regs.length > 0 && regs[0].active) {
+            registration = regs[0];
+            break;
+          }
         }
 
-        setStep('3d');
-        console.log('[Push] Final SW state:', registration.active?.state);
+        setStep('3c');
+
+        if (!registration.active) {
+          // Last resort - try to use it anyway
+          console.log('[Push] No active SW after waiting, attempting anyway...');
+        } else {
+          console.log('[Push] SW active:', registration.active.state);
+        }
       } catch (err: any) {
         console.error('[Push] SW failed:', err);
         setErrorMsg(`SW: ${err?.message || String(err)}`);
