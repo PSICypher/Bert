@@ -110,18 +110,19 @@ export default function PushNotificationToggle() {
       let registration: ServiceWorkerRegistration;
       try {
         console.log('[Push] Registering service worker...');
-        setStep('3');
+        setStep('3a');
         registration = await navigator.serviceWorker.register('/sw.js');
         console.log('[Push] SW registered, state:', registration.active?.state);
+        setStep('3b');
 
         // Wait for activation with timeout (don't use .ready which can hang)
         if (!registration.active) {
           console.log('[Push] Waiting for SW to activate...');
-          await new Promise<void>((resolve, reject) => {
+          await new Promise<void>((resolve) => {
             const timeout = setTimeout(() => {
               console.log('[Push] SW activation timeout, proceeding anyway');
               resolve();
-            }, 3000);
+            }, 2000);
 
             if (registration.installing || registration.waiting) {
               const sw = registration.installing || registration.waiting;
@@ -137,10 +138,11 @@ export default function PushNotificationToggle() {
             }
           });
         }
+        setStep('3c');
         console.log('[Push] SW ready to use');
-      } catch (err) {
+      } catch (err: any) {
         console.error('[Push] SW registration failed:', err);
-        setErrorMsg('SW failed');
+        setErrorMsg(`SW: ${err?.message || 'failed'}`);
         setStatus('error');
         setIsActioning(false);
         return;
@@ -283,14 +285,15 @@ export default function PushNotificationToggle() {
       <button
         onClick={handleClick}
         disabled={isActioning}
-        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-red-100 text-red-600 text-xs"
+        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-red-100 text-red-600 text-xs max-w-[120px]"
         title={errorMsg || 'Error - tap to retry'}
       >
         {isActioning ? (
-          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
         ) : (
-          <AlertCircle className="w-3.5 h-3.5" />
+          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
         )}
+        {errorMsg && <span className="truncate text-[10px]">{errorMsg}</span>}
       </button>
     );
   }
