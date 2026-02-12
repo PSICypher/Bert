@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
 import { Plus, Plane, Calendar, MapPin } from 'lucide-react';
+import PushNotificationToggle from '@/components/PushNotificationToggle';
 
 interface Trip {
   id: string;
@@ -107,6 +108,7 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-gray-900">Holiday Planner</h1>
             </div>
             <div className="flex items-center gap-4">
+              <PushNotificationToggle />
               <span className="text-sm text-gray-600">{user?.email}</span>
               <button
                 onClick={() => supabase.auth.signOut().then(() => router.push('/login'))}
