@@ -2,16 +2,13 @@ import webpush from 'web-push';
 import { createAdminSupabaseClient } from './supabase/server';
 
 // Initialize web-push with VAPID details
-if (
-  process.env.VAPID_SUBJECT &&
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY &&
-  process.env.VAPID_PRIVATE_KEY
-) {
-  webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT,
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
+// Trim values to remove any accidental whitespace/newlines from env vars
+const vapidSubject = process.env.VAPID_SUBJECT?.trim();
+const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY?.trim().replace(/=+$/, '');
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY?.trim();
+
+if (vapidSubject && vapidPublicKey && vapidPrivateKey) {
+  webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
 }
 
 export interface PushSubscriptionData {
