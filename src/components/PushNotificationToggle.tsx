@@ -106,39 +106,60 @@ export default function PushNotificationToggle() {
         return;
       }
 
-      // Get service worker registration - try existing first, then register
+      // Get service worker registration
       let registration: ServiceWorkerRegistration;
       try {
         console.log('[Push] Getting service worker...');
         setStep('3a');
 
-        // First try to get existing registration
-        const existingRegs = await navigator.serviceWorker.getRegistrations();
-        console.log('[Push] Existing registrations:', existingRegs.length);
+        // Register SW (will return existing if already registered)
+        registration = await navigator.serviceWorker.register('/sw.js');
+        console.log('[Push] SW registration obtained');
+        setStep('3b');
 
-        if (existingRegs.length > 0) {
-          registration = existingRegs[0];
-          console.log('[Push] Using existing SW registration');
-        } else {
-          // Register new SW
-          setStep('3b');
-          console.log('[Push] Registering new SW...');
-          registration = await navigator.serviceWorker.register('/sw.js');
-          console.log('[Push] SW registered');
-        }
-
-        setStep('3c');
-
-        // Wait briefly for activation if needed
+        // Wait for SW to become active
         if (!registration.active) {
-          console.log('[Push] Waiting for SW activation...');
-          await new Promise<void>((resolve) => {
-            setTimeout(resolve, 1500);
+          console.log('[Push] Waiting for SW to activate...');
+
+          await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              reject(new Error('SW activation timeout'));
+            }, 10000);
+
+            const checkActive = () => {
+              if (registration.active) {
+                clearTimeout(timeout);
+                resolve();
+                return true;
+              }
+              return false;
+            };
+
+            // Check immediately
+            if (checkActive()) return;
+
+            // Listen for state changes
+            const sw = registration.installing || registration.waiting;
+            if (sw) {
+              sw.addEventListener('statechange', () => {
+                console.log('[Push] SW state:', sw.state);
+                if (sw.state === 'activated') {
+                  checkActive();
+                }
+              });
+            }
+
+            // Also poll as backup
+            const interval = setInterval(() => {
+              if (checkActive()) {
+                clearInterval(interval);
+              }
+            }, 500);
           });
         }
 
-        setStep('3d');
-        console.log('[Push] SW ready, active:', !!registration.active);
+        setStep('3c');
+        console.log('[Push] SW active:', registration.active?.state);
       } catch (err: any) {
         console.error('[Push] SW failed:', err);
         setErrorMsg(`SW: ${err?.message || String(err)}`);
