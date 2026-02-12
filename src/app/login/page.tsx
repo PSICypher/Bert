@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { createBrowserSupabaseClient, ALLOWED_EMAILS } from '@/lib/supabase-browser'
 
 type Status = 'idle' | 'loading' | 'sent' | 'error'
@@ -9,12 +10,25 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<Status>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const router = useRouter()
 
   // Create supabase client lazily - only in the browser
   const supabase = useMemo(() => {
     if (typeof window === 'undefined') return null
     return createBrowserSupabaseClient()
   }, [])
+
+  // Check if already logged in
+  useEffect(() => {
+    async function checkAuth() {
+      if (!supabase) return
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        router.replace('/')
+      }
+    }
+    checkAuth()
+  }, [supabase, router])
 
   async function handleGoogleSignIn() {
     if (!supabase) return

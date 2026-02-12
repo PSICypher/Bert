@@ -17,33 +17,48 @@ function urlBase64ToUint8Array(base64String: string) {
 export default function PushNotificationToggle() {
   const [isSupported, setIsSupported] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    async function checkSubscription() {
+    async function checkSupport() {
       // Check if push notifications are supported
-      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      if (typeof window === 'undefined') return;
+
+      if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
         setIsSupported(false);
-        setIsLoading(false);
+        setIsReady(true);
         return;
       }
 
       setIsSupported(true);
-      setPermission(Notification.permission);
 
+      // Check current subscription with timeout
       try {
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.getSubscription();
-        setIsSubscribed(!!subscription);
-      } catch (err) {
-        console.error('Error checking subscription:', err);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('timeout')), 3000)
+        );
+
+        const checkPromise = async () => {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          if (registrations.length > 0) {
+            const subscription = await registrations[0].pushManager.getSubscription();
+            return !!subscription;
+          }
+          return false;
+        };
+
+        const subscribed = await Promise.race([checkPromise(), timeoutPromise]);
+        setIsSubscribed(subscribed as boolean);
+      } catch {
+        // Timeout or error - just show as not subscribed
+        setIsSubscribed(false);
       }
 
-      setIsLoading(false);
+      setIsReady(true);
     }
 
-    checkSubscription();
+    checkSupport();
   }, []);
 
   const subscribe = async () => {
@@ -52,16 +67,20 @@ export default function PushNotificationToggle() {
     try {
       // Request permission
       const result = await Notification.requestPermission();
-      setPermission(result);
 
       if (result !== 'granted') {
         setIsLoading(false);
         return;
       }
 
-      // Register service worker if not already registered
+      // Register service worker
       const registration = await navigator.serviceWorker.register('/sw.js');
-      await navigator.serviceWorker.ready;
+
+      // Wait for it to be ready with timeout
+      const ready = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
+      ]) as ServiceWorkerRegistration;
 
       // Subscribe to push
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
@@ -71,7 +90,7 @@ export default function PushNotificationToggle() {
         return;
       }
 
-      const subscription = await registration.pushManager.subscribe({
+      const subscription = await ready.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
       });
@@ -103,22 +122,19 @@ export default function PushNotificationToggle() {
     setIsLoading(true);
 
     try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-
-      if (subscription) {
-        // Unsubscribe from browser
-        await subscription.unsubscribe();
-
-        // Remove from server
-        await fetch('/api/push/unsubscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ endpoint: subscription.endpoint }),
-        });
-
-        setIsSubscribed(false);
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          await subscription.unsubscribe();
+          await fetch('/api/push/unsubscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ endpoint: subscription.endpoint }),
+          });
+        }
       }
+      setIsSubscribed(false);
     } catch (err) {
       console.error('Error unsubscribing from push:', err);
     }
@@ -134,37 +150,30 @@ export default function PushNotificationToggle() {
     }
   };
 
-  if (!isSupported) {
+  // Don't render until we know support status
+  if (!isReady || !isSupported) {
     return null;
-  }
-
-  if (permission === 'denied') {
-    return (
-      <div className="flex items-center gap-2 text-gray-400" title="Notifications blocked">
-        <BellOff className="w-5 h-5" />
-      </div>
-    );
   }
 
   return (
     <button
       onClick={toggle}
       disabled={isLoading}
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${
+      className={`flex items-center gap-1.5 px-2 py-1 rounded-md transition-colors text-xs ${
         isSubscribed
           ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
       }`}
-      title={isSubscribed ? 'Notifications enabled - click to disable' : 'Enable notifications'}
+      title={isSubscribed ? 'Notifications on - tap to disable' : 'Enable notifications'}
     >
       {isLoading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader2 className="w-3.5 h-3.5 animate-spin" />
       ) : isSubscribed ? (
-        <Bell className="w-4 h-4" />
+        <Bell className="w-3.5 h-3.5" />
       ) : (
-        <BellOff className="w-4 h-4" />
+        <BellOff className="w-3.5 h-3.5" />
       )}
-      <span className="text-sm">
+      <span className="hidden sm:inline">
         {isSubscribed ? 'On' : 'Off'}
       </span>
     </button>

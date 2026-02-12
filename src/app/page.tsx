@@ -101,18 +101,18 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-purple-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <Plane className="h-8 w-8 text-purple-600" />
-              <h1 className="text-2xl font-bold text-gray-900">Holiday Planner</h1>
+            <div className="flex items-center gap-2">
+              <Plane className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600 flex-shrink-0" />
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">Holiday Planner</h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
               <PushNotificationToggle />
-              <span className="text-sm text-gray-600">{user?.email}</span>
+              <span className="text-xs sm:text-sm text-gray-600 hidden sm:inline truncate max-w-[150px]">{user?.email}</span>
               <button
                 onClick={() => supabase.auth.signOut().then(() => router.push('/login'))}
-                className="text-sm text-purple-600 hover:text-purple-800"
+                className="text-xs sm:text-sm text-purple-600 hover:text-purple-800 whitespace-nowrap"
               >
                 Sign Out
               </button>
