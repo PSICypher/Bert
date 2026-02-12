@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { MapPin, ChevronDown, Edit2, Bed, DollarSign, Car } from 'lucide-react'
+import { MapPin, ChevronDown, Bed, DollarSign, Car, Pencil } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 
 type ItineraryDay = Database['public']['Tables']['itinerary_days']['Row']
@@ -205,21 +205,7 @@ export function DayCardGrid({
                 <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Left Column - Activities */}
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold text-gray-900">Activities</h4>
-                      {onChangeDay && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onChangeDay(day)
-                          }}
-                          className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                          Edit Day
-                        </button>
-                      )}
-                    </div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Activities</h4>
                     {/* Show activities from day.activities array */}
                     {activities.length > 0 ? (
                       <div className="space-y-2">
@@ -366,7 +352,7 @@ export function DayCardGrid({
                       className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium
                                  bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors border border-blue-200"
                     >
-                      <Edit2 className="w-4 h-4" />
+                      <Pencil className="w-4 h-4" />
                       Change this day
                     </button>
                   </div>

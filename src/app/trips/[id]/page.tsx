@@ -52,6 +52,11 @@ const AiInsights = dynamic(
   { loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64" /> }
 );
 
+const ChangeSheet = dynamic(
+  () => import('@/components/trip/ChangeSheet').then((mod) => mod.ChangeSheet),
+  { ssr: false }
+);
+
 type Trip = Database['public']['Tables']['trips']['Row'];
 type PlanVersion = Database['public']['Tables']['plan_versions']['Row'];
 type ItineraryDay = Database['public']['Tables']['itinerary_days']['Row'];
@@ -93,6 +98,7 @@ export default function TripPage() {
   const [costs, setCosts] = useState<Cost[]>([]);
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [editingDay, setEditingDay] = useState<ItineraryDay | null>(null);
 
   const activePlan = plans.find((p) => p.id === activePlanId) || null;
   const currencySymbol = activePlan?.currency === 'GBP' ? '£' : '$';
@@ -198,8 +204,16 @@ export default function TripPage() {
   };
 
   const handleChangeDay = (day: ItineraryDay) => {
-    console.log('Edit day:', day.id);
-    // TODO: Open change sheet for day editing
+    setEditingDay(day);
+  };
+
+  const handleDayEditClose = () => {
+    setEditingDay(null);
+  };
+
+  const handleDayEditApplied = () => {
+    setEditingDay(null);
+    fetchPlanData(); // Refresh days data
   };
 
   if (loading) {
@@ -354,6 +368,22 @@ export default function TripPage() {
         homeCurrency={activePlan?.currency || 'GBP'}
         tripCurrency="USD"
       />
+
+      {/* Day Edit Sheet */}
+      {editingDay && (
+        <ChangeSheet
+          isOpen={!!editingDay}
+          onClose={handleDayEditClose}
+          onApplied={handleDayEditApplied}
+          tripId={tripId}
+          planVersionId={activePlanId}
+          currencySymbol={currencySymbol}
+          destination={trip?.destination}
+          itemType="itinerary_day"
+          existingItem={editingDay}
+          allDays={days}
+        />
+      )}
     </div>
   );
 }
