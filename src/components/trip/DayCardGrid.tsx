@@ -8,6 +8,21 @@ type ItineraryDay = Database['public']['Tables']['itinerary_days']['Row']
 type Accommodation = Database['public']['Tables']['accommodations']['Row']
 type Cost = Database['public']['Tables']['costs']['Row']
 
+// Activity can be either a string or an object with name property
+interface ActivityItem {
+  name: string
+  time?: string
+  notes?: string
+}
+
+function getActivityName(activity: unknown): string {
+  if (typeof activity === 'string') return activity
+  if (activity && typeof activity === 'object' && 'name' in activity) {
+    return (activity as ActivityItem).name
+  }
+  return ''
+}
+
 interface DayCardGridProps {
   days: ItineraryDay[]
   accommodations: Accommodation[]
@@ -80,7 +95,7 @@ export function DayCardGrid({
         const totalDayCost = dayCosts.reduce((sum, c) => sum + c.amount, 0)
         const isExpanded = expandedDayId === day.id
         const activities = Array.isArray(day.activities)
-          ? (day.activities as string[])
+          ? (day.activities as unknown[])
           : []
 
         return (
@@ -158,7 +173,7 @@ export function DayCardGrid({
                   {activities.map((activity, idx) => (
                     <div key={idx} className="flex items-start gap-2 text-sm text-gray-600">
                       <span className="text-gray-400 mt-0.5">·</span>
-                      <span>{activity}</span>
+                      <span>{getActivityName(activity)}</span>
                     </div>
                   ))}
                 </div>
@@ -217,7 +232,7 @@ export function DayCardGrid({
                               className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
                               style={{ backgroundColor: day.color }}
                             />
-                            <span className="text-gray-700">{activity}</span>
+                            <span className="text-gray-700">{getActivityName(activity)}</span>
                           </div>
                         ))}
                       </div>
