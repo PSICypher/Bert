@@ -20,6 +20,7 @@ export default function PushNotificationToggle() {
   const [status, setStatus] = useState<Status>('loading');
   const [isActioning, setIsActioning] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
+  const [step, setStep] = useState<string>('');
 
   useEffect(() => {
     checkStatus();
@@ -83,10 +84,12 @@ export default function PushNotificationToggle() {
     console.log('[Push] Enable notifications starting...');
     setIsActioning(true);
     setErrorMsg('');
+    setStep('1');
 
     try {
       // Request permission
       console.log('[Push] Requesting permission...');
+      setStep('2');
       const permission = await Notification.requestPermission();
       console.log('[Push] Permission result:', permission);
 
@@ -107,11 +110,34 @@ export default function PushNotificationToggle() {
       let registration: ServiceWorkerRegistration;
       try {
         console.log('[Push] Registering service worker...');
+        setStep('3');
         registration = await navigator.serviceWorker.register('/sw.js');
-        console.log('[Push] SW registered, waiting for activation...');
-        // Wait for it to be ready
-        await navigator.serviceWorker.ready;
-        console.log('[Push] SW ready');
+        console.log('[Push] SW registered, state:', registration.active?.state);
+
+        // Wait for activation with timeout (don't use .ready which can hang)
+        if (!registration.active) {
+          console.log('[Push] Waiting for SW to activate...');
+          await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              console.log('[Push] SW activation timeout, proceeding anyway');
+              resolve();
+            }, 3000);
+
+            if (registration.installing || registration.waiting) {
+              const sw = registration.installing || registration.waiting;
+              sw?.addEventListener('statechange', () => {
+                if (sw.state === 'activated') {
+                  clearTimeout(timeout);
+                  resolve();
+                }
+              });
+            } else {
+              clearTimeout(timeout);
+              resolve();
+            }
+          });
+        }
+        console.log('[Push] SW ready to use');
       } catch (err) {
         console.error('[Push] SW registration failed:', err);
         setErrorMsg('SW failed');
@@ -140,6 +166,7 @@ export default function PushNotificationToggle() {
       let subscription: PushSubscription;
       try {
         console.log('[Push] Subscribing to push...');
+        setStep('4');
         subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
@@ -163,6 +190,7 @@ export default function PushNotificationToggle() {
         }
 
         console.log('[Push] Sending subscription to server...');
+        setStep('5');
         const res = await fetch('/api/push/subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -288,7 +316,10 @@ export default function PushNotificationToggle() {
       title={isOn ? 'Notifications ON - tap to turn off' : 'Tap to enable notifications'}
     >
       {isActioning ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        <>
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          {step && <span className="text-[10px]">{step}</span>}
+        </>
       ) : isOn ? (
         <BellRing className="w-3.5 h-3.5" />
       ) : (
