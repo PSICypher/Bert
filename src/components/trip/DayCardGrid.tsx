@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { MapPin, Clock, ChevronDown, ChevronUp, Edit2, Bed, DollarSign, Car } from 'lucide-react'
+import { MapPin, ChevronDown, Edit2, Bed, DollarSign, Car } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
-import { DayActivities } from './DayActivities'
 
 type ItineraryDay = Database['public']['Tables']['itinerary_days']['Row']
 type Accommodation = Database['public']['Tables']['accommodations']['Row']
@@ -153,18 +152,21 @@ export function DayCardGrid({
                 </div>
               </div>
 
+              {/* Activities List - always visible when collapsed */}
+              {!isExpanded && activities.length > 0 && (
+                <div className="mt-3 space-y-1">
+                  {activities.map((activity, idx) => (
+                    <div key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+                      <span className="text-gray-400 mt-0.5">·</span>
+                      <span>{activity}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Compact Info - when collapsed */}
               {!isExpanded && (
                 <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
-                  {activities.length > 0 && (
-                    <span className="flex items-center gap-1">
-                      <span
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: day.color }}
-                      />
-                      {activities.length} {activities.length === 1 ? 'activity' : 'activities'}
-                    </span>
-                  )}
                   {accommodation && (
                     <span className="flex items-center gap-1.5">
                       <Bed className="w-3.5 h-3.5" />
@@ -203,12 +205,34 @@ export function DayCardGrid({
                         </button>
                       )}
                     </div>
-                    <DayActivities
-                      planVersionId={planVersionId}
-                      dayId={day.id}
-                      dayLocation={day.location}
-                      currencySymbol={currencySymbol}
-                    />
+                    {/* Show activities from day.activities array */}
+                    {activities.length > 0 ? (
+                      <div className="space-y-2">
+                        {activities.map((activity, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-start gap-2 text-sm bg-gray-50 rounded-lg p-3"
+                          >
+                            <span
+                              className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
+                              style={{ backgroundColor: day.color }}
+                            />
+                            <span className="text-gray-700">{activity}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 py-4 text-center">
+                        No activities planned for this day
+                      </p>
+                    )}
+                    {/* Drive time summary */}
+                    {day.drive_time && (
+                      <div className="mt-3 flex items-center gap-2 text-sm text-gray-500">
+                        <Car className="w-4 h-4" />
+                        <span>~{day.drive_time} total driving</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Right Column - Accommodation & Costs */}
