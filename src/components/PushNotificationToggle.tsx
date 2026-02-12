@@ -280,15 +280,16 @@ export default function PushNotificationToggle() {
     return null;
   }
 
-  // Denied - show disabled state
+  // Denied - show disabled state with tap to see instructions
   if (status === 'denied') {
     return (
-      <div
-        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-gray-100 text-gray-400 text-xs"
-        title="Notifications blocked in browser settings"
+      <button
+        onClick={() => alert('Notifications are blocked.\n\nTo enable:\n1. Long-press app icon → App info → Notifications → Enable\n\nOr in browser:\nSettings → Site settings → Notifications → Allow')}
+        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-orange-100 text-orange-600 text-xs"
+        title="Notifications blocked - tap for help"
       >
         <BellOff className="w-3.5 h-3.5" />
-      </div>
+      </button>
     );
   }
 
