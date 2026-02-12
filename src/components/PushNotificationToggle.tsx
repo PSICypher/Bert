@@ -146,17 +146,11 @@ export default function PushNotificationToggle() {
         return;
       }
 
-      // Get VAPID key - trim any whitespace/newlines
-      const rawVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-      console.log('[Push] Raw VAPID key present:', !!rawVapidKey, 'length:', rawVapidKey?.length);
-
-      if (!rawVapidKey) {
-        console.error('[Push] No VAPID key in env');
-        setErrorMsg('No VAPID key');
-        setStatus('error');
-        setIsActioning(false);
-        return;
-      }
+      // Get VAPID key - use env var or fallback to hardcoded value
+      // The public key is safe to expose (it's meant to be public)
+      const FALLBACK_VAPID_KEY = 'BJvHL-34fv7HQw_km9bBIpGmI-DRIfEhq_FZCSKLLWzUZb_9qZPl8g3iXtucX0CzRFv6n_2NRjdB-lg6QLVI-TU';
+      const rawVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || FALLBACK_VAPID_KEY;
+      console.log('[Push] VAPID key from env:', !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY, 'using fallback:', !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY);
 
       // Clean the key - remove whitespace, newlines, and any trailing chars
       const vapidPublicKey = rawVapidKey.trim().replace(/\\n/g, '').replace(/\n/g, '');
