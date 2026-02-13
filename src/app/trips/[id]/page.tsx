@@ -439,6 +439,9 @@ export default function TripPage() {
             destination={trip.destination}
             startDate={trip.start_date}
             endDate={trip.end_date}
+            days={days}
+            transport={transport}
+            accommodations={accommodations}
           />
         )}
 

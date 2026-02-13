@@ -98,6 +98,30 @@ export interface PackingItem {
   category: string;
   name: string;
   quantity: number;
+  linkedTo?: string;
+}
+
+export interface ItineraryContext {
+  days: Array<{
+    day_number: number;
+    date: string | null;
+    location: string;
+    activities: Array<{ name: string; time?: string }>;
+  }>;
+  transport: Array<{
+    type: string;
+    provider: string;
+    details: string;
+    pickup_location?: string;
+    dropoff_location?: string;
+  }>;
+  accommodations: Array<{
+    name: string;
+    type: string;
+    location: string;
+    check_in: string;
+    check_out: string;
+  }>;
 }
 
 export interface ConversationMessage {
@@ -182,7 +206,17 @@ Use realistic prices in GBP. Include specific place names and coordinates where 
 
 const GENERATE_PACKING_SYSTEM_PROMPT = `You are a packing list expert. Generate a comprehensive packing list for the specified trip.
 Return valid JSON array with items categorized appropriately.
-Categories: Clothes, Toiletries, Electronics, Documents, Kids, Beach/Pool, Medications, Misc`;
+Categories: Clothes, Toiletries, Electronics, Documents, Kids, Beach/Pool, Medications, Misc
+
+Each item should include an optional "linkedTo" field describing which activity/day it's for (e.g. "Day 5: Bahamas boat trip").
+Only include linkedTo for items tied to specific activities — generic items like "Underwear" should omit it.
+
+Pay special attention to:
+- Transport types (boat trips need seasickness pills, flights need neck pillows, etc.)
+- Accommodation types (beach resort vs city hotel changes what to pack)
+- Specific activities mentioned in the itinerary
+- Weather and location considerations
+- Travel documents needed for the destinations`;
 
 // ============================================================================
 // Helper Functions
@@ -470,24 +504,51 @@ export async function generatePackingList(
   startDate: string,
   endDate: string,
   travellerCount: number,
-  activities: string[]
+  activities: string[],
+  itinerary?: ItineraryContext
 ): Promise<PackingItem[]> {
-  const prompt = `Generate a packing list:
+  let prompt = `Generate a packing list:
 
 Destination: ${destination}
 Dates: ${startDate} to ${endDate}
 Travellers: ${travellerCount}
-Activities: ${activities.join(', ')}
+Activities: ${activities.join(', ')}`;
+
+  if (itinerary) {
+    if (itinerary.days.length > 0) {
+      prompt += `\n\nDetailed Itinerary:`;
+      for (const day of itinerary.days) {
+        const acts = day.activities.map(a => a.name).join(', ');
+        prompt += `\n- Day ${day.day_number} (${day.date || 'TBD'}): ${day.location}${acts ? ` — ${acts}` : ''}`;
+      }
+    }
+
+    if (itinerary.transport.length > 0) {
+      prompt += `\n\nTransport:`;
+      for (const t of itinerary.transport) {
+        prompt += `\n- ${t.type}: ${t.provider} ${t.details}${t.pickup_location ? ` from ${t.pickup_location}` : ''}${t.dropoff_location ? ` to ${t.dropoff_location}` : ''}`;
+      }
+    }
+
+    if (itinerary.accommodations.length > 0) {
+      prompt += `\n\nAccommodations:`;
+      for (const a of itinerary.accommodations) {
+        prompt += `\n- ${a.name} (${a.type}) in ${a.location}, ${a.check_in} to ${a.check_out}`;
+      }
+    }
+  }
+
+  prompt += `
 
 Return valid JSON array:
 [
   {"category": "Clothes", "name": "T-shirts", "quantity": 7},
-  {"category": "Toiletries", "name": "Sunscreen SPF 50", "quantity": 2}
+  {"category": "Beach/Pool", "name": "Snorkel gear", "quantity": 1, "linkedTo": "Day 5: Bahamas boat trip"}
 ]
 
 Categories: Clothes, Toiletries, Electronics, Documents, Kids, Beach/Pool, Medications, Misc`;
 
-  const text = await callClaude(GENERATE_PACKING_SYSTEM_PROMPT, prompt, 2000);
+  const text = await callClaude(GENERATE_PACKING_SYSTEM_PROMPT, prompt, 3000);
 
   try {
     const jsonMatch = text.match(/\[[\s\S]*\]/);

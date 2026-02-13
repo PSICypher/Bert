@@ -94,13 +94,14 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = await request.json()
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id')
 
-  if (!body.id) {
+  if (!id) {
     return NextResponse.json({ error: 'id is required' }, { status: 400 })
   }
 
-  const { id, ...updates } = body as { id: string } & PackingItemUpdate
+  const updates = await request.json() as PackingItemUpdate
 
   const { data, error } = await (supabase
     .from('packing_items') as any)
