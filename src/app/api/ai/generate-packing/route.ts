@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@/lib/supabase/server';
+import { createRouteHandlerClient } from '@/lib/supabase-server';
 import { generatePackingList } from '@/lib/ai/anthropic';
 
 export async function POST(request: NextRequest) {
@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
       activities = [],
       trip_id,
       save_to_trip = false,
+      itinerary,
     } = body;
 
     if (!destination || !startDate || !endDate) {
@@ -29,13 +30,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate packing list using AI
+    // Generate packing list using AI with full itinerary context
     const packingItems = await generatePackingList(
       destination,
       startDate,
       endDate,
       travellerCount || 2,
-      activities
+      activities,
+      itinerary
     );
 
     // Optionally save to trip
