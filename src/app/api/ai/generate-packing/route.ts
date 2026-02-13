@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@/lib/supabase-server';
+import { createRouteHandlerClient } from '@/lib/supabase/server';
 import { generatePackingList } from '@/lib/ai/anthropic';
 
 export async function POST(request: NextRequest) {
@@ -77,9 +77,10 @@ export async function POST(request: NextRequest) {
       saved: false,
     });
   } catch (error) {
-    console.error('AI generate-packing error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('AI generate-packing error:', message, error);
     return NextResponse.json(
-      { error: 'Packing list generation failed' },
+      { error: 'Packing list generation failed', detail: message },
       { status: 500 }
     );
   }
